@@ -6,6 +6,9 @@
 int drawSkel = 0;
 unsigned int texture[7]; // Texture names
 
+#define Dfloor  16
+#define Yfloor -2
+
 
 void Print(const char* format , ...)
 {
@@ -303,6 +306,30 @@ void display()
     glDisable(GL_LIGHTING);
   }
 
+   //  Draw floor
+   int i,j;
+   glEnable(GL_TEXTURE_2D);
+   glEnable(GL_POLYGON_OFFSET_FILL);
+   glEnable(GL_TEXTURE_2D);
+   glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
+   glBindTexture(GL_TEXTURE_2D,texture[0]);
+   glPolygonOffset(1,1);
+   glColor3f(1,1,1);
+   glNormal3f(0,1,0);
+   for (j=-Dfloor;j<Dfloor;j++)
+   {
+      glBegin(GL_QUAD_STRIP);
+      for (i=-Dfloor;i<=Dfloor;i++)
+      {
+         glTexCoord2f(i,j); glVertex3f(i,Yfloor,j);
+         glTexCoord2f(i,j+1); glVertex3f(i,Yfloor,j+1);
+      }
+      glEnd();
+   }
+   glDisable(GL_POLYGON_OFFSET_FILL);
+   glDisable(GL_TEXTURE_2D);
+
+
   drawSides(.5, 1);
   //glTranslated(0,4,-4);
   //drawSides(.7, 1);
@@ -548,12 +575,12 @@ int main(int argc,char* argv[])
   glutKeyboardFunc(key);
   glutIdleFunc(idle);
   //  Load texture
-  texture[0] = LoadTexBMP("carbon.bmp");
-  texture[1] = LoadTexBMP("carbon.bmp");
-  texture[2] = LoadTexBMP("carbon.bmp");
-  texture[3] = LoadTexBMP("carbon.bmp");
-  texture[4] = LoadTexBMP("carbon.bmp");
-  texture[5] = LoadTexBMP("carbon.bmp");
+  texture[0] = LoadTexBMP("water.bmp");
+//  texture[1] = LoadTexBMP("carbon.bmp");
+//  texture[2] = LoadTexBMP("carbon.bmp");
+//  texture[3] = LoadTexBMP("carbon.bmp");
+//  texture[4] = LoadTexBMP("carbon.bmp");
+//  texture[5] = LoadTexBMP("carbon.bmp");
   //  Pass control to GLUT so it can interact with the user
   glutMainLoop();
   return 0;
