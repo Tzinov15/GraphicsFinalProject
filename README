@@ -1,0 +1,40 @@
+Alex Tzinov
+HW6
+Rubiks Cube + Lighting + Textures
+
+Use h,j,k,l to move around the scene!
+Green: Grass texture
+Yellow: HoneyComb texture
+Red: Brick texture
+Blue: Water texture
+White: Steel texture
+Orange: Wooden texture
+
+
+
+Key bindings
+  m          Toggle between perspective and orthogonal
+  c          Toggle between seeing the sun or not
+  s          Toggle whether the skeleton of the Rubiks Cubes are shown or not
+  +/-        Changes field of view for perspective
+
+  SUN STUFF: 
+  z/Z        Change speed of sun
+  d/D        Change distance of sun
+  e/E        Change elevation of sun
+  q          Turn off lighting
+  w          Pause the motion of the sun
+  ><         (horizontal carrot keys) Revolve sun
+  
+  arrows     Change view angle
+  PgDn/PgUp  Zoom in and out
+  0          Reset view angle
+  j/k        Strafe to the left and right
+  h/l        Move forwards and backwards within the scene
+  ESC        Exit
+
+
+Hours Spent: 
+
+5-6 hours 
+
