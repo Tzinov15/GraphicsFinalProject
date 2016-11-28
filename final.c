@@ -7,7 +7,8 @@ int drawSkel = 0;
 unsigned int texture[7]; // Texture names
 
 #define Dfloor  16
-#define Yfloor -2
+#define YfloorMin -8
+#define YfloorMax 8
 
 
 void Print(const char* format , ...)
@@ -21,12 +22,12 @@ void Print(const char* format , ...)
   va_end(args);
   //  Display the characters one at a time at the current raster position
   while (*ch)
-    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,*ch++);
+  glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,*ch++);
 }
 
 /*[0]
- *  Set projection
- */
+*  Set projection
+*/
 static void Project()
 {
   //  Tell OpenGL we want to manipulate the projection matrix
@@ -41,10 +42,10 @@ static void Project()
   glLoadIdentity();
   //  Perspective transformation
   if (mode)
-    gluPerspective(fov,asp,dim/8,8*dim);
+  gluPerspective(fov,asp,dim/8,8*dim);
   //  Orthogonal projection
   else
-    glOrtho(-asp*dim,+asp*dim, -dim,+dim, -dim,+dim);
+  glOrtho(-asp*dim,+asp*dim, -dim,+dim, -dim,+dim);
   //  Switch to manipulating the model matrix
   //  The model matrix is used to make transformations to the models/objects in the world.
   //  We can define object once, and then rotate, scale, transform it.
@@ -90,56 +91,155 @@ void cubeSide(double squareSize)
 }
 
 /*
- *  Draw vertex in polar coordinates with normal
- */
+*  Draw vertex in polar coordinates with normal
+*/
 /* What this function will be useful for is placing a vertex (and the corresponding normal for that vertex)
- * anywhere in the scene. Because it is using polar coordinates, we can easily construct an entire sphere made up of vertexes and their corresponding normals.
- * Once our entire sphere is made up of normals, we can send light at it and have behave as a 3D sphere would (because it has all (or several thousands) of its normal surfaces defined).
- */
+* anywhere in the scene. Because it is using polar coordinates, we can easily construct an entire sphere made up of vertexes and their corresponding normals.
+* Once our entire sphere is made up of normals, we can send light at it and have behave as a 3D sphere would (because it has all (or several thousands) of its normal surfaces defined).
+*/
 static void Vertex(double th,double ph)
 {
-   double x = Sin(th)*Cos(ph);
-   double y = Cos(th)*Cos(ph);
-   double z =         Sin(ph);
-   //  For a sphere at the origin, the position
-   //  and normal vectors are the same
-   glNormal3d(x,y,z);
-   glVertex3d(x,y,z);
+  double x = Sin(th)*Cos(ph);
+  double y = Cos(th)*Cos(ph);
+  double z =         Sin(ph);
+  //  For a sphere at the origin, the position
+  //  and normal vectors are the same
+  glNormal3d(x,y,z);
+  glVertex3d(x,y,z);
 }
 
 
 static void sun(double x,double y,double z,double r)
 {
-   int th,ph;
-   float yellow[] = {1.0,1.0,0.0,1.0};
-   float Emission[]  = {0.0,0.0,0.01*emission,1.0};
-   //  Save transformation
-   glPushMatrix();
-   //  Offset, scale and rotate
-   glTranslated(x,y,z);
-   glScaled(r,r,r);
-   //  Yellow sun
-   glColor3f(1,1,.6);
-   glMaterialf(GL_FRONT,GL_SHININESS,shiny);
-   glMaterialfv(GL_FRONT,GL_SPECULAR,yellow);
-   glMaterialfv(GL_FRONT,GL_EMISSION,Emission);
-   //  Bands of latitude
-   //  Generate bands of rectangles, each rectangle getting a respective surface normal set
-   //  If we decrease the granularity of these rectangles (by increasing the value of inc) and turn off shading (set smooth to 0) we can very clearly see each one of these quad bands and how the color of the quad band is determined by the angle of the light. This angle is relative to the surface normal of the quad which gets set here
-   for (ph=-90;ph<90;ph+=inc)
-   {
-      glBegin(GL_QUAD_STRIP);
-      for (th=0;th<=360;th+=2*inc)
-      {
-         Vertex(th,ph);
-         Vertex(th,ph+inc);
-      }
-      glEnd();
-   }
-   //  Undo transofrmations
-   glPopMatrix();
+  int th,ph;
+  float yellow[] = {1.0,1.0,0.0,1.0};
+  float Emission[]  = {0.0,0.0,0.01*emission,1.0};
+  //  Save transformation
+  glPushMatrix();
+  //  Offset, scale and rotate
+  glTranslated(x,y,z);
+  glScaled(r,r,r);
+  //  Yellow sun
+  glColor3f(1,1,.6);
+  glMaterialf(GL_FRONT,GL_SHININESS,shiny);
+  glMaterialfv(GL_FRONT,GL_SPECULAR,yellow);
+  glMaterialfv(GL_FRONT,GL_EMISSION,Emission);
+  //  Bands of latitude
+  //  Generate bands of rectangles, each rectangle getting a respective surface normal set
+  //  If we decrease the granularity of these rectangles (by increasing the value of inc) and turn off shading (set smooth to 0) we can very clearly see each one of these quad bands and how the color of the quad band is determined by the angle of the light. This angle is relative to the surface normal of the quad which gets set here
+  for (ph=-90;ph<90;ph+=inc)
+  {
+    glBegin(GL_QUAD_STRIP);
+    for (th=0;th<=360;th+=2*inc)
+    {
+      Vertex(th,ph);
+      Vertex(th,ph+inc);
+    }
+    glEnd();
+  }
+  //  Undo transofrmations
+  glPopMatrix();
 }
 
+
+void drawDesk() {
+  // Draw the four legs
+  drawTableLeg(-4,-5,2,1,1,1,0);
+  drawTableLeg(4,-5,2,1,1,1,0);
+  drawTableLeg(-4,-5,-2,1,1,1,0);
+  drawTableLeg(4,-5,-2,1,1,1,0);
+  drawTableTop(0, .3, .7, 1, 1, 1, 0);
+  drawTableTop(0, 0, .7, 1, 1, 1, 0);
+}
+
+void drawTableLeg(double x, double y, double z, double dx, double dy, double dz, double th) {
+  glPushMatrix();
+  //  Offset
+  glTranslated(x,y,z);
+  glRotated(th,0,1,0);
+  glScaled(dx,dy,dz);
+
+  drawTableLegSide(0, 0, 0, .3, 3, 1, 0);
+  drawTableLegSide(-.7, 0, .7, .3, 3, 1, 90);
+  drawTableLegSide(.7, 0, .7, .3, 3, 1, -90);
+  drawTableLegSide(0, 0, 1.4, .3, 3, 1, 180);
+  glPopMatrix();
+}
+// The table top will be made up two large horizontal rectangular planes that extend BEYOND
+// the table legs, and have four smaller rectangles at each side. (A 3D rectangular slab)
+void drawTableTop(double x, double y, double z, double dx, double dy, double dz, double th) {
+  int i,j;
+  glPushMatrix();
+  glTranslated(x,y,z);
+  glRotated(th,0,1,0);
+  glScaled(dx,dy,dz);
+  int tableSize = 5;
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D,texture[1]);
+  glPolygonOffset(1,1);
+  glColor3f(1,1,1);
+  glNormal3f(1,0,0);
+  for (j=-tableSize;j<tableSize;j++)
+  {
+    glBegin(GL_QUAD_STRIP);
+    for (i=-tableSize;i<=tableSize;i++)
+    {
+      glTexCoord2f(i,j); glVertex3f(i,-2,j);
+      glTexCoord2f(i,j+1); glVertex3f(i,-2,j+1);
+    }
+    glEnd();
+  }
+  glDisable(GL_POLYGON_OFFSET_FILL);
+  glDisable(GL_TEXTURE_2D);
+  glPopMatrix();
+}
+
+// Draws an individual table leg which consists of four vertical rectangles with a table leg at the bottom of each one
+// The table leg can be either a fatter cube towards the bottom, or a square, flat topped pyarmid (four trapezoids)
+void drawTableLegSide(double x, double y, double z, double dx, double dy, double dz, double th) {
+
+  float white[] = {1,1,1,1};
+  float Emission[]  = {0.0,0.0,0.01*emission,1.0};
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D,texture[2]);
+  //  Save transformation
+  glPushMatrix();
+  //  Offset
+  glTranslated(x,y,z);
+  glRotated(th,0,1,0);
+  glScaled(dx,dy,dz);
+
+
+  glBegin(GL_QUADS);
+
+  glTexCoord2f(0,0);
+  glVertex3f(-1,-1, 1);
+
+  glTexCoord2f(1,0);
+  glVertex3f(+1,-1, 1);
+
+  glTexCoord2f(1,1);
+  glVertex3f(+1,+1, 1);
+
+  glTexCoord2f(0,1);
+  glVertex3f(-1,+1, 1);
+  glNormal3d(0,0,-1);
+  glEnd();
+  //  Undo transofrmations
+  glPopMatrix();
+
+
+}
 
 
 void drawSides(double squareSize, int bw) {
@@ -184,7 +284,6 @@ void drawSides(double squareSize, int bw) {
 
   glBindTexture(GL_TEXTURE_2D,texture[1]);
   glRotatef(90,1,0,0);
-  glNormal3d(0,0,-1);
   glTranslated(0,-squareDisplacement,-((fullSquareSize*2)+spacing));
   // GREEN - TOP
   (bw == 0) ? glColor3f(.1,.1,.1) : glColor3f(.5,.8,.2);
@@ -202,11 +301,7 @@ void drawSides(double squareSize, int bw) {
 }
 
 
-static void square(double x,double y,double z,
-    double dx,double dy,double dz,
-    double th)
-    {
-
+static void square(double x,double y,double z, double dx,double dy,double dz, double th) {
   float white[] = {1,1,1,1};
   float Emission[]  = {0.0,0.0,0.01*emission,1.0};
   glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
@@ -239,8 +334,8 @@ static void square(double x,double y,double z,
 }
 
 /*
- *  OpenGL (GLUT) calls this routine to display the scene
- */
+*  OpenGL (GLUT) calls this routine to display the scene
+*/
 void display()
 {
   const double len=1.5;  //  Length of axes
@@ -269,7 +364,6 @@ void display()
   }
   //  Draw A cube
 
-
   //  Flat or smooth shading
   glShadeModel(smooth ? GL_SMOOTH : GL_FLAT);
 
@@ -282,7 +376,7 @@ void display()
 
     /* The light obviously doesn't come from physically creating the sun object below in the scene. Whether we draw this sun object or not is not significant. However, the scene does make more sense if the user can see where the light is actively coming from. We acheive this illusion (openGL lighting seemingly 'coming' from our sun) by using the idle function to update the physical position of the sun, and then simultanously updating the lighting position as well*/
     if (seeSun)
-      sun(Position[0],Position[1],Position[2] , 0.3);
+    sun(Position[0],Position[1],Position[2] , 0.3);
 
     //  OpenGL should normalize normal vectors
     glEnable(GL_NORMALIZE);
@@ -306,31 +400,13 @@ void display()
     glDisable(GL_LIGHTING);
   }
 
-   //  Draw floor
-   int i,j;
-   glEnable(GL_TEXTURE_2D);
-   glEnable(GL_POLYGON_OFFSET_FILL);
-   glEnable(GL_TEXTURE_2D);
-   glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
-   glBindTexture(GL_TEXTURE_2D,texture[0]);
-   glPolygonOffset(1,1);
-   glColor3f(1,1,1);
-   glNormal3f(0,1,0);
-   for (j=-Dfloor;j<Dfloor;j++)
-   {
-      glBegin(GL_QUAD_STRIP);
-      for (i=-Dfloor;i<=Dfloor;i++)
-      {
-         glTexCoord2f(i,j); glVertex3f(i,Yfloor,j);
-         glTexCoord2f(i,j+1); glVertex3f(i,Yfloor,j+1);
-      }
-      glEnd();
-   }
-   glDisable(GL_POLYGON_OFFSET_FILL);
-   glDisable(GL_TEXTURE_2D);
+  drawFloor();
+  drawCeiling();
 
 
-  drawSides(.5, 1);
+  //drawSides(.35, 1);
+
+  drawDesk();
   //glTranslated(0,4,-4);
   //drawSides(.7, 1);
   //  Draw axes
@@ -365,30 +441,82 @@ void display()
 
 }
 
+
+void drawFloor() {
+  //  Draw floor
+  int i,j;
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D,texture[0]);
+  glPolygonOffset(1,1);
+  glColor3f(1,1,1);
+  glNormal3f(0,1,0);
+  for (j=-Dfloor;j<Dfloor;j++)
+  {
+    glBegin(GL_QUAD_STRIP);
+    for (i=-Dfloor;i<=Dfloor;i++)
+    {
+      glTexCoord2f(i,j); glVertex3f(i,YfloorMin,j);
+      glTexCoord2f(i,j+1); glVertex3f(i,YfloorMin,j+1);
+    }
+    glEnd();
+  }
+  glDisable(GL_POLYGON_OFFSET_FILL);
+  glDisable(GL_TEXTURE_2D);
+
+}
+
+void drawCeiling() {
+  // draw ceiling
+  int i,j;
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D,texture[1]);
+  glPolygonOffset(1,1);
+  glColor3f(1,1,1);
+  glNormal3f(1,0,0);
+  for (j=-Dfloor;j<Dfloor;j++)
+  {
+    glBegin(GL_QUAD_STRIP);
+    for (i=-Dfloor;i<=Dfloor;i++)
+    {
+      glTexCoord2f(i,j); glVertex3f(i,YfloorMax,j);
+      glTexCoord2f(i,j+1); glVertex3f(i,YfloorMax,j+1);
+    }
+    glEnd();
+  }
+  glDisable(GL_POLYGON_OFFSET_FILL);
+  glDisable(GL_TEXTURE_2D);
+}
+
 /*
- *  GLUT calls this routine when an arrow key is pressed
- */
+*  GLUT calls this routine when an arrow key is pressed
+*/
 void special(int key,int x,int y)
 {
   //  Right arrow key - increase angle by 5 degrees
   if (key == GLUT_KEY_RIGHT)
-    th += 5;
+  th += 5;
   //  Left arrow key - decrease angle by 5 degrees
   else if (key == GLUT_KEY_LEFT) {
     th -= 5;
   }
   //  Up arrow key - increase elevation by 5 degrees
   else if (key == GLUT_KEY_UP)
-    ph += 5;
+  ph += 5;
   //  Down arrow key - decrease elevation by 5 degrees
   else if (key == GLUT_KEY_DOWN)
-    ph -= 5;
+  ph -= 5;
   //  PageUp key - increase dim
   else if (key == GLUT_KEY_PAGE_UP)
-    dim += 0.1;
+  dim += 0.1;
   //  PageDown key - decrease dim
   else if (key == GLUT_KEY_PAGE_DOWN && dim>1)
-    dim -= 0.1;
+  dim -= 0.1;
   //  Keep angles to +/-360 degrees
   th %= 360;
   ph %= 360;
@@ -400,8 +528,8 @@ void special(int key,int x,int y)
 }
 
 /*
- *  GLUT calls this routine when a key is pressed
- */
+*  GLUT calls this routine when a key is pressed
+*/
 void key(unsigned char ch,int x,int y)
 {
 
@@ -423,62 +551,62 @@ void key(unsigned char ch,int x,int y)
 
   //  Exit on ESC
   else if (ch == 27)
-    exit(0);
+  exit(0);
 
   /* The radius of the suns orbit */
   else if (ch == 'd')
-    sunDistance += 1;
+  sunDistance += 1;
   else if (ch == 'D')
-    sunDistance -= 1;
+  sunDistance -= 1;
 
   /* Suns elevation (Y displacement) */
   else if (ch == 'e')
-    sunElevation += 1;
+  sunElevation += 1;
   else if (ch == 'E')
-    sunElevation -= 1;
+  sunElevation -= 1;
 
   /* Enable Disable Sun */
   else if (ch == 'q')
-    light = 1-light;
+  light = 1-light;
 
   /* Enable Disable Sun Movement */
   else if (ch == 'w')
-    sunMovement = 1 - sunMovement;
+  sunMovement = 1 - sunMovement;
 
   //  Toggle axes
   else if (ch == 'a' || ch == 'A')
-    axes = 1-axes;
+  axes = 1-axes;
 
   //  Switch display mode
   else if (ch == 'm' || ch == 'M')
-    mode = 1-mode;
+  mode = 1-mode;
 
   //  Change field of view angle
   else if (ch == '-' && ch>1)
-    fov--;
+  fov--;
   else if (ch == '+' && ch<179)
-    fov++;
+  fov++;
 
   // Manually move the sun
   else if (ch == '>' )
-    zh--;
+  zh--;
   else if (ch == '<' )
-    zh++;
+  zh++;
 
   // Toggle Sun Speed
   else if (ch == 'Z')
-    sunSpeed += 100;
+  sunSpeed += 100;
   else if (ch == 'z') {
     sunSpeed -= 100;
     if (sunSpeed == 0)
-      sunSpeed = 100;
+    sunSpeed = 100;
   }
 
   // Toggle Skeletons
   else if (ch == 's')
-    drawSkel = 1-drawSkel;
+  drawSkel = 1-drawSkel;
   else if (ch == 'c')
-    seeSun = 1 - seeSun;
+  seeSun = 1 - seeSun;
 
   /* Strafing left and right */
   if (ch=='k') {
@@ -527,8 +655,8 @@ void key(unsigned char ch,int x,int y)
 }
 
 /*
- *  GLUT calls this routine when the window is resized
- */
+*  GLUT calls this routine when the window is resized
+*/
 void reshape(int width,int height)
 {
   //  Ratio of the width to the height of the window
@@ -540,32 +668,32 @@ void reshape(int width,int height)
 }
 
 /* This function gets called continously when the window isn't busy loading a window resize or some other action
- * This idle() function is a good place to put continuous animiation that we want to have play out throughout the
- * duration of the program */
+* This idle() function is a good place to put continuous animiation that we want to have play out throughout the
+* duration of the program */
 void idle()
 {
-   //  Elapsed time in seconds
-   double t = glutGet(GLUT_ELAPSED_TIME)/sunSpeed;
-   zh = fmod(90*t,360.0);
-   //  Tell GLUT it is necessary to redisplay the scene
-   glutPostRedisplay();
+  //  Elapsed time in seconds
+  double t = glutGet(GLUT_ELAPSED_TIME)/sunSpeed;
+  zh = fmod(90*t,360.0);
+  //  Tell GLUT it is necessary to redisplay the scene
+  glutPostRedisplay();
 }
 
 /*
- *  Start up GLUT and tell it what to do
- */
+*  Start up GLUT and tell it what to do
+*/
 int main(int argc,char* argv[])
 {
-  th=30;
-  ph=30;
+  th=90;
+  ph=15;
   mode = 1;
-  dim = 9.5;
+  dim = 9.0;
   //  Initialize GLUT
   glutInit(&argc,argv);
   //  Request double buffered, true color window with Z buffering at 600x600
   glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
   glutInitWindowSize(600,600);
-  glutCreateWindow("Lighting! (Rubiks Cube) - Alex Tzinov");
+  glutCreateWindow("Final Project Alex Tzinov");
 
   glClearColor( .5, .5, .5, 1);
   //  Set callbacks
@@ -574,13 +702,15 @@ int main(int argc,char* argv[])
   glutSpecialFunc(special);
   glutKeyboardFunc(key);
   glutIdleFunc(idle);
-  //  Load texture
-  texture[0] = LoadTexBMP("water.bmp");
-//  texture[1] = LoadTexBMP("carbon.bmp");
-//  texture[2] = LoadTexBMP("carbon.bmp");
-//  texture[3] = LoadTexBMP("carbon.bmp");
-//  texture[4] = LoadTexBMP("carbon.bmp");
-//  texture[5] = LoadTexBMP("carbon.bmp");
+  //  Load textureG
+  texture[0] = LoadTexBMP("dark_wood.bmp");
+  texture[1] = LoadTexBMP("tile.bmp");
+  texture[2] = LoadTexBMP("steel.bmp");
+  //  texture[1] = LoadTexBMP("carbon.bmp");
+  //  texture[2] = LoadTexBMP("carbon.bmp");
+  //  texture[3] = LoadTexBMP("carbon.bmp");
+  //  texture[4] = LoadTexBMP("carbon.bmp");
+  //  texture[5] = LoadTexBMP("carbon.bmp");
   //  Pass control to GLUT so it can interact with the user
   glutMainLoop();
   return 0;

@@ -91,6 +91,12 @@ void cubeSide(double squareSize);
 void drawSkeleton();
 void drawSides(double squareSize, int bw);
 static void square(double x,double y,double z, double dx,double dy,double dz, double th);
+void drawDesk();
+void drawTableTop(double x, double y, double z, double dx, double dy, double dz, double th);
+void drawTableLeg(double x, double y, double z, double dx, double dy, double dz, double th);
+void drawTableLegSide(double x, double y, double z, double dx, double dy, double dz, double th);
+void drawFloor();
+void drawCeiling();
 
 
 
