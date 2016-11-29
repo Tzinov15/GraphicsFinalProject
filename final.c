@@ -8,7 +8,7 @@ unsigned int texture[7]; // Texture names
 
 #define Dfloor  16
 #define YfloorMin -8
-#define YfloorMax 8
+#define YfloorMax 12
 
 
 void Print(const char* format , ...)
@@ -402,6 +402,10 @@ void display()
 
   drawFloor();
   drawCeiling();
+  drawWalls(0,0,0,1,1,1,0);
+  drawWalls(0,0,0,1,1,1,90);
+  drawWalls(0,0,0,1,1,1,-90);
+  drawWalls(0,0,0,1,1,1,180);
 
 
   //drawSides(.35, 1);
@@ -465,7 +469,45 @@ void drawFloor() {
   }
   glDisable(GL_POLYGON_OFFSET_FILL);
   glDisable(GL_TEXTURE_2D);
+}
 
+void drawWalls(double x,double y,double z, double dx,double dy,double dz, double th) {
+  float white[] = {1,1,1,1};
+  float Emission[]  = {0.0,0.0,0.01*emission,1.0};
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D,texture[2]);
+  //  Save transformation
+  glPushMatrix();
+  //  Offset
+  glTranslated(x,y,z);
+  glRotated(th,0,1,0);
+  //glScaled(dx,dy,dz);
+
+
+  glBegin(GL_QUADS);
+
+  glTexCoord2f(0,0);
+  glVertex3f(-Dfloor, YfloorMin, Dfloor);
+
+  glTexCoord2f(1,0);
+  glVertex3f(-Dfloor, YfloorMax, Dfloor);
+
+  glTexCoord2f(1,1);
+  glVertex3f(Dfloor, YfloorMax, Dfloor);
+
+  glTexCoord2f(0,1);
+  glVertex3f(Dfloor, YfloorMin, Dfloor);
+  glNormal3d(1,0,0);
+  glEnd();
+  //  Undo transofrmations
+  glPopMatrix();
 }
 
 void drawCeiling() {
@@ -475,7 +517,7 @@ void drawCeiling() {
   glEnable(GL_POLYGON_OFFSET_FILL);
   glEnable(GL_TEXTURE_2D);
   glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
-  glBindTexture(GL_TEXTURE_2D,texture[1]);
+  glBindTexture(GL_TEXTURE_2D,texture[4]);
   glPolygonOffset(1,1);
   glColor3f(1,1,1);
   glNormal3f(1,0,0);
@@ -506,14 +548,17 @@ void special(int key,int x,int y)
     th -= 5;
   }
   //  Up arrow key - increase elevation by 5 degrees
-  else if (key == GLUT_KEY_UP)
-  ph += 5;
+  else if (key == GLUT_KEY_UP) {
+    if (ph < 45) ph += 5;
+  }
   //  Down arrow key - decrease elevation by 5 degrees
-  else if (key == GLUT_KEY_DOWN)
-  ph -= 5;
+  else if (key == GLUT_KEY_DOWN) {
+    if (ph > -25) ph -= 5;
+}
   //  PageUp key - increase dim
-  else if (key == GLUT_KEY_PAGE_UP)
-  dim += 0.1;
+  else if (key == GLUT_KEY_PAGE_UP) {
+    if (dim < 8.5) dim += 0.1;
+}
   //  PageDown key - decrease dim
   else if (key == GLUT_KEY_PAGE_DOWN && dim>1)
   dim -= 0.1;
@@ -684,10 +729,10 @@ void idle()
 */
 int main(int argc,char* argv[])
 {
-  th=90;
+  th=-180;
   ph=15;
   mode = 1;
-  dim = 9.0;
+  dim = 8.5;
   //  Initialize GLUT
   glutInit(&argc,argv);
   //  Request double buffered, true color window with Z buffering at 600x600
@@ -707,6 +752,7 @@ int main(int argc,char* argv[])
   texture[1] = LoadTexBMP("tile.bmp");
   texture[2] = LoadTexBMP("steel.bmp");
   texture[3] = LoadTexBMP("blackboard.bmp");
+  texture[4] = LoadTexBMP("popcorn.bmp");
   //  texture[1] = LoadTexBMP("carbon.bmp");
   //  texture[2] = LoadTexBMP("carbon.bmp");
   //  texture[3] = LoadTexBMP("carbon.bmp");

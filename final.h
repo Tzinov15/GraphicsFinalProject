@@ -97,6 +97,7 @@ void drawTableLeg(double x, double y, double z, double dx, double dy, double dz,
 void drawTableLegSide(double x, double y, double z, double dx, double dy, double dz, double th);
 void drawFloor();
 void drawCeiling();
+void drawWalls(double x,double y,double z, double dx,double dy,double dz, double th);
 
 
 
