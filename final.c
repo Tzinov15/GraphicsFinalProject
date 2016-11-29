@@ -148,8 +148,8 @@ void drawDesk() {
   drawTableLeg(4,-5,2,1,1,1,0);
   drawTableLeg(-4,-5,-2,1,1,1,0);
   drawTableLeg(4,-5,-2,1,1,1,0);
-  drawTableTop(0, .3, .7, 1, 1, 1, 0);
-  drawTableTop(0, 0, .7, 1, 1, 1, 0);
+  drawTableTop(0, .3, .7, 1, 1, .5, 0);
+  drawTableTop(0, 0, .7, 1, 1, .5, 0);
 }
 
 void drawTableLeg(double x, double y, double z, double dx, double dy, double dz, double th) {
@@ -178,7 +178,7 @@ void drawTableTop(double x, double y, double z, double dx, double dy, double dz,
   glEnable(GL_POLYGON_OFFSET_FILL);
   glEnable(GL_TEXTURE_2D);
   glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
-  glBindTexture(GL_TEXTURE_2D,texture[1]);
+  glBindTexture(GL_TEXTURE_2D,texture[3]);
   glPolygonOffset(1,1);
   glColor3f(1,1,1);
   glNormal3f(1,0,0);
@@ -706,6 +706,7 @@ int main(int argc,char* argv[])
   texture[0] = LoadTexBMP("dark_wood.bmp");
   texture[1] = LoadTexBMP("tile.bmp");
   texture[2] = LoadTexBMP("steel.bmp");
+  texture[3] = LoadTexBMP("blackboard.bmp");
   //  texture[1] = LoadTexBMP("carbon.bmp");
   //  texture[2] = LoadTexBMP("carbon.bmp");
   //  texture[3] = LoadTexBMP("carbon.bmp");
