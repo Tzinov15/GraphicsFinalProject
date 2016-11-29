@@ -188,16 +188,26 @@ void drawTableTop(double x, double y, double z, double dx, double dy, double dz,
   glPolygonOffset(1,1);
   glColor3f(1,1,1);
   glNormal3f(1,0,0);
-  for (j=-tableSize;j<tableSize;j++)
-  {
-    glBegin(GL_QUAD_STRIP);
-    for (i=-tableSize;i<=tableSize;i++)
-    {
-      glTexCoord2f(i,j); glVertex3f(i,-2,j);
-      glTexCoord2f(i,j+1); glVertex3f(i,-2,j+1);
-    }
-    glEnd();
-  }
+
+
+
+
+  glBegin(GL_QUADS);
+
+  glTexCoord2f(0,0);
+  glVertex3f(-tableSize, -2, -tableSize);
+
+  glTexCoord2f(1,0);
+  glVertex3f(tableSize, -2, -tableSize);
+
+  glTexCoord2f(1,1);
+  glVertex3f(tableSize, -2, tableSize);
+
+  glTexCoord2f(0,1);
+  glVertex3f(-tableSize, -2, tableSize);
+  glNormal3d(0,1,0);
+  glEnd();
+
   glDisable(GL_POLYGON_OFFSET_FILL);
   glDisable(GL_TEXTURE_2D);
   glPopMatrix();
@@ -259,7 +269,7 @@ void drawTableLegSide(double x, double y, double z, double dx, double dy, double
   glEnable(GL_POLYGON_OFFSET_FILL);
   glEnable(GL_TEXTURE_2D);
   glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
-  glBindTexture(GL_TEXTURE_2D,texture[2]);
+  glBindTexture(GL_TEXTURE_2D,texture[0]);
   //  Save transformation
   glPushMatrix();
   //  Offset
@@ -467,7 +477,7 @@ void display()
   drawDesk();
   glRotated(zh, 0, .1, 0);
   glTranslated(1.65, 0, -1.6);
-  drawSides(.3, 1, -1, .6, 2, 1, 1, 1, 45, 45);
+  drawSides(.45, 1, -1, 1.6, 2, 1, 1, 1, 45, 45);
   //glTranslated(0,4,-4);
   //  Draw axes
   glColor3f(1,1,1);
@@ -503,29 +513,40 @@ void display()
 
 
 void drawFloor() {
-  //  Draw floor
-  int i,j;
+  float white[] = {1,1,1,1};
+  float Emission[]  = {0.0,0.0,0.01*emission,1.0};
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_POLYGON_OFFSET_FILL);
   glEnable(GL_TEXTURE_2D);
   glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
   glBindTexture(GL_TEXTURE_2D,texture[5]);
-  glPolygonOffset(1,1);
-  glColor3f(1,1,1);
-  glNormal3f(0,1,0);
-  for (j=-Dfloor;j<Dfloor;j++)
-  {
-    glBegin(GL_QUAD_STRIP);
-    for (i=-Dfloor;i<=Dfloor;i++)
-    {
-      glVertex3f(i,YfloorMin,j);
-      glVertex3f(i,YfloorMin,j+1);
-      //glTexCoord2f(i,j+8); glVertex3f(i,YfloorMin,j+8);
-    }
-    glEnd();
-  }
-  glDisable(GL_POLYGON_OFFSET_FILL);
-  glDisable(GL_TEXTURE_2D);
+  //  Save transformation
+  glPushMatrix();
+  //  Offset
+  //glScaled(dx,dy,dz);
+
+
+  glBegin(GL_QUADS);
+
+  glTexCoord2f(0,0);
+  glVertex3f(-Dfloor, YfloorMin, Dfloor);
+
+  glTexCoord2f(1,0);
+  glVertex3f(Dfloor, YfloorMin, Dfloor);
+
+  glTexCoord2f(1,1);
+  glVertex3f(Dfloor, YfloorMin, -Dfloor);
+
+  glTexCoord2f(0,1);
+  glVertex3f(-Dfloor, YfloorMin, -Dfloor);
+  glNormal3d(0,-1,0);
+  glEnd();
+  //  Undo transofrmations
+  glPopMatrix();
 }
 
 void drawWalls(double x,double y,double z, double dx,double dy,double dz, double th, int style) {
@@ -788,10 +809,10 @@ void idle()
 */
 int main(int argc,char* argv[])
 {
-  th=-255;
-  ph=25;
+  th=0;
+  ph=-15;
   mode = 1;
-  dim = 5.1;
+  dim = 8.5;
   //  Initialize GLUT
   glutInit(&argc,argv);
   //  Request double buffered, true color window with Z buffering at 600x600
@@ -810,7 +831,7 @@ int main(int argc,char* argv[])
   texture[0] = LoadTexBMP("dark_wood.bmp");
   texture[1] = LoadTexBMP("tile.bmp");
   texture[2] = LoadTexBMP("steel.bmp");
-  texture[3] = LoadTexBMP("blackboard.bmp");
+  texture[3] = LoadTexBMP("woodFloor.bmp");
   texture[4] = LoadTexBMP("popcorn.bmp");
   texture[5] = LoadTexBMP("basketball-floor-texture.bmp");
   texture[6] = LoadTexBMP("chalkboard.bmp");
