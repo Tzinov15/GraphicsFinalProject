@@ -150,6 +150,10 @@ void drawDesk() {
   drawTableLeg(4,-5,-2,1,1,1,0);
   drawTableTop(0, .3, .7, 1, 1, .5, 0);
   drawTableTop(0, 0, .7, 1, 1, .5, 0);
+  drawTableSides(0, -2, -1.80, 1, 1, 1, 0);
+  drawTableSides(0, -2, 3.20, 1, 1, 1, 0);
+  drawTableSides(-5, -2, .70, .5, 1, 1, 90);
+  drawTableSides(5, -2, .70, .5, 1, 1, 90);
 }
 
 void drawTableLeg(double x, double y, double z, double dx, double dy, double dz, double th) {
@@ -167,6 +171,8 @@ void drawTableLeg(double x, double y, double z, double dx, double dy, double dz,
 }
 // The table top will be made up two large horizontal rectangular planes that extend BEYOND
 // the table legs, and have four smaller rectangles at each side. (A 3D rectangular slab)
+
+
 void drawTableTop(double x, double y, double z, double dx, double dy, double dz, double th) {
   int i,j;
   glPushMatrix();
@@ -194,6 +200,48 @@ void drawTableTop(double x, double y, double z, double dx, double dy, double dz,
   }
   glDisable(GL_POLYGON_OFFSET_FILL);
   glDisable(GL_TEXTURE_2D);
+  glPopMatrix();
+}
+
+
+
+
+void drawTableSides(double x, double y, double z, double dx, double dy, double dz, double th) {
+  float white[] = {1,1,1,1};
+  float Emission[]  = {0.0,0.0,0.01*emission,1.0};
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D,texture[3]);
+  //  Save transformation
+  glPushMatrix();
+  //  Offset
+  glTranslated(x,y,z);
+  glRotated(th,0,1,0);
+  glScaled(dx,dy,dz);
+
+
+  glBegin(GL_QUADS);
+
+  glTexCoord2f(0,0);
+  glVertex3f(-5, 0, 0);
+
+  glTexCoord2f(1,0);
+  glVertex3f(-5, .30, 0);
+
+  glTexCoord2f(1,1);
+  glVertex3f(5, .30, 0);
+
+  glTexCoord2f(0,1);
+  glVertex3f(5, 0, 0);
+  glNormal3d(1,0,0);
+  glEnd();
+  //  Undo transofrmations
   glPopMatrix();
 }
 
@@ -242,8 +290,14 @@ void drawTableLegSide(double x, double y, double z, double dx, double dy, double
 }
 
 
-void drawSides(double squareSize, int bw) {
+void drawSides(double squareSize, int bw, double x, double y, double z, double dx, double dy, double dz, double th, double ph) {
 
+
+  glPushMatrix();
+  glTranslated(x,y,z);
+  glRotated(ph,0,0,1);
+  glRotated(th,0,1,0);
+  glScaled(dx,dy,dz);
   glEnable(GL_TEXTURE_2D);
   glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
   glBindTexture(GL_TEXTURE_2D,texture[0]);
@@ -298,6 +352,7 @@ void drawSides(double squareSize, int bw) {
   cubeSide(squareSize);
 
   glDisable(GL_TEXTURE_2D);
+  glPopMatrix();
 }
 
 
@@ -402,17 +457,18 @@ void display()
 
   drawFloor();
   drawCeiling();
-  drawWalls(0,0,0,1,1,1,0);
-  drawWalls(0,0,0,1,1,1,90);
-  drawWalls(0,0,0,1,1,1,-90);
-  drawWalls(0,0,0,1,1,1,180);
+  drawWalls(0,0,0,1,1,1,0, 0);
+  drawWalls(0,0,0,1,1,1,90, 0);
+  drawWalls(0,0,0,1,1,1,-90, 0);
+  drawWalls(0,0,0,1,1,1,180, 1);
 
 
-  //drawSides(.35, 1);
 
   drawDesk();
+  glRotated(zh, 0, .1, 0);
+  glTranslated(1.65, 0, -1.6);
+  drawSides(.3, 1, -1, .6, 2, 1, 1, 1, 45, 45);
   //glTranslated(0,4,-4);
-  //drawSides(.7, 1);
   //  Draw axes
   glColor3f(1,1,1);
   if (axes)
@@ -453,7 +509,7 @@ void drawFloor() {
   glEnable(GL_POLYGON_OFFSET_FILL);
   glEnable(GL_TEXTURE_2D);
   glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
-  glBindTexture(GL_TEXTURE_2D,texture[0]);
+  glBindTexture(GL_TEXTURE_2D,texture[5]);
   glPolygonOffset(1,1);
   glColor3f(1,1,1);
   glNormal3f(0,1,0);
@@ -462,8 +518,9 @@ void drawFloor() {
     glBegin(GL_QUAD_STRIP);
     for (i=-Dfloor;i<=Dfloor;i++)
     {
-      glTexCoord2f(i,j); glVertex3f(i,YfloorMin,j);
-      glTexCoord2f(i,j+1); glVertex3f(i,YfloorMin,j+1);
+      glVertex3f(i,YfloorMin,j);
+      glVertex3f(i,YfloorMin,j+1);
+      //glTexCoord2f(i,j+8); glVertex3f(i,YfloorMin,j+8);
     }
     glEnd();
   }
@@ -471,7 +528,7 @@ void drawFloor() {
   glDisable(GL_TEXTURE_2D);
 }
 
-void drawWalls(double x,double y,double z, double dx,double dy,double dz, double th) {
+void drawWalls(double x,double y,double z, double dx,double dy,double dz, double th, int style) {
   float white[] = {1,1,1,1};
   float Emission[]  = {0.0,0.0,0.01*emission,1.0};
   glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
@@ -482,7 +539,8 @@ void drawWalls(double x,double y,double z, double dx,double dy,double dz, double
   glEnable(GL_POLYGON_OFFSET_FILL);
   glEnable(GL_TEXTURE_2D);
   glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
-  glBindTexture(GL_TEXTURE_2D,texture[2]);
+  if (style == 1) glBindTexture(GL_TEXTURE_2D,texture[6]);
+  else glBindTexture(GL_TEXTURE_2D,texture[2]);
   //  Save transformation
   glPushMatrix();
   //  Offset
@@ -557,11 +615,12 @@ void special(int key,int x,int y)
 }
   //  PageUp key - increase dim
   else if (key == GLUT_KEY_PAGE_UP) {
-    if (dim < 8.5) dim += 0.1;
+    if (dim < 8.4) dim += 0.1;
 }
   //  PageDown key - decrease dim
-  else if (key == GLUT_KEY_PAGE_DOWN && dim>1)
-  dim -= 0.1;
+  else if (key == GLUT_KEY_PAGE_DOWN && dim>1) {
+    if (dim > 4.4) dim -= 0.1;
+}
   //  Keep angles to +/-360 degrees
   th %= 360;
   ph %= 360;
@@ -729,10 +788,10 @@ void idle()
 */
 int main(int argc,char* argv[])
 {
-  th=-180;
-  ph=15;
+  th=-255;
+  ph=25;
   mode = 1;
-  dim = 8.5;
+  dim = 5.1;
   //  Initialize GLUT
   glutInit(&argc,argv);
   //  Request double buffered, true color window with Z buffering at 600x600
@@ -753,6 +812,8 @@ int main(int argc,char* argv[])
   texture[2] = LoadTexBMP("steel.bmp");
   texture[3] = LoadTexBMP("blackboard.bmp");
   texture[4] = LoadTexBMP("popcorn.bmp");
+  texture[5] = LoadTexBMP("basketball-floor-texture.bmp");
+  texture[6] = LoadTexBMP("chalkboard.bmp");
   //  texture[1] = LoadTexBMP("carbon.bmp");
   //  texture[2] = LoadTexBMP("carbon.bmp");
   //  texture[3] = LoadTexBMP("carbon.bmp");

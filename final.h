@@ -89,7 +89,7 @@ void Print(const char* format , ...);
 static void Project();
 void cubeSide(double squareSize);
 void drawSkeleton();
-void drawSides(double squareSize, int bw);
+void drawSides(double squareSize, int bw, double x, double y, double z, double dx, double dy, double dz, double th, double ph);
 static void square(double x,double y,double z, double dx,double dy,double dz, double th);
 void drawDesk();
 void drawTableTop(double x, double y, double z, double dx, double dy, double dz, double th);
@@ -97,7 +97,8 @@ void drawTableLeg(double x, double y, double z, double dx, double dy, double dz,
 void drawTableLegSide(double x, double y, double z, double dx, double dy, double dz, double th);
 void drawFloor();
 void drawCeiling();
-void drawWalls(double x,double y,double z, double dx,double dy,double dz, double th);
+void drawWalls(double x,double y,double z, double dx,double dy,double dz, double th, int style);
+void drawTableSides(double x, double y, double z, double dx, double dy, double dz, double th);
 
 
 
