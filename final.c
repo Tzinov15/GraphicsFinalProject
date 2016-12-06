@@ -192,13 +192,10 @@ void drawSides(double squareSize, int bw, double x, double y, double z, double d
   cubeSide(squareSize, x, y, z);
 
 
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D,texture[2]);
-  glRotatef(-180,0,1,0);
-  glTranslated(0,0,((fullSquareSize*2)+(spacing*2)));
   // WHITE - LEFT
   glColor3f(1,1,1);
-  cubeSide(squareSize);
+  glTranslated(0,0,-9.2);
+  cubeSide(squareSize, x, y, z);
 
   /*
   glBindTexture(GL_TEXTURE_2D,texture[2]);
