@@ -85,11 +85,11 @@ int light = 1;
 #define LEN 8192  //  Maximum length of text string
 void Print(const char* format , ...);
 static void Project();
-void cubeSide(double squareSize);
+void cubeSide(double squareSize, double x, double y, double z);
 void drawSkeleton();
 void drawSides(double squareSize, int bw, double x, double y, double z, double dx, double dy, double dz, double th, double ph);
 static void square(double x,double y,double z, double dx,double dy,double dz, double th);
-void drawDesk();
+void drawDesk(double x,double y,double z, double dx,double dy,double dz, double th);
 void drawTableTop(double x, double y, double z, double dx, double dy, double dz, double th);
 void drawTableLeg(double x, double y, double z, double dx, double dy, double dz, double th);
 void drawTableLegSide(double x, double y, double z, double dx, double dy, double dz, double th);

@@ -11,8 +11,7 @@ unsigned int texture[10]; // Texture names
 #define YfloorMax 12
 
 
-void Print(const char* format , ...)
-{
+void Print(const char* format , ...) {
   char    buf[LEN];
   char*   ch=buf;
   va_list args;
@@ -28,8 +27,7 @@ void Print(const char* format , ...)
 /*[0]
 *  Set projection
 */
-static void Project()
-{
+static void Project() {
   //  Tell OpenGL we want to manipulate the projection matrix
   //  Projection matrix is used to manipulate the matrix that deals with the view volume / camera properties
   //  Typically set zoom factor, aspect ratio, and clipping planes
@@ -54,23 +52,15 @@ static void Project()
   glLoadIdentity();
 }
 
-
-
-
-
-
-
 /*
 *  Draw vertex in polar coordinates with normal
-*/
-/* What this function will be useful for is placing a vertex (and the corresponding normal for that vertex)
+What this function will be useful for is placing a vertex (and the corresponding normal for that vertex)
 * anywhere in the scene. Because it is using polar coordinates, we can easily construct an entire sphere
-  made up of vertexes and their corresponding normals.
+made up of vertexes and their corresponding normals.
 * Once our entire sphere is made up of normals, we can send light at it and have behave as a 3D sphere would
- (because it has all (or several thousands) of its normal surfaces defined).
+(because it has all (or several thousands) of its normal surfaces defined).
 */
-static void Vertex(double th,double ph)
-{
+static void Vertex(double th,double ph) {
   double x = Sin(th)*Cos(ph);
   double y = Cos(th)*Cos(ph);
   double z =         Sin(ph);
@@ -81,8 +71,7 @@ static void Vertex(double th,double ph)
 }
 
 
-static void sun(double x,double y,double z,double r)
-{
+static void sun(double x,double y,double z,double r) {
   int th,ph;
   float yellow[] = {1.0,1.0,0.0,1.0};
   float Emission[]  = {0.0,0.0,0.01*emission,1.0};
@@ -98,7 +87,10 @@ static void sun(double x,double y,double z,double r)
   glMaterialfv(GL_FRONT,GL_EMISSION,Emission);
   //  Bands of latitude
   //  Generate bands of rectangles, each rectangle getting a respective surface normal set
-  //  If we decrease the granularity of these rectangles (by increasing the value of inc) and turn off shading (set smooth to 0) we can very clearly see each one of these quad bands and how the color of the quad band is determined by the angle of the light. This angle is relative to the surface normal of the quad which gets set here
+  //  If we decrease the granularity of these rectangles (by increasing the value of inc) and turn off shading
+  //  (set smooth to 0) we can very clearly see each one of these quad bands and how the color of the quad band
+  // is determined by the angle of the light. This angle is relative to the surface normal of the quad which gets
+  //   set here
   for (ph=-90;ph<90;ph+=inc)
   {
     glBegin(GL_QUAD_STRIP);
@@ -113,35 +105,44 @@ static void sun(double x,double y,double z,double r)
   glPopMatrix();
 }
 
-
-
-
-
-void cubeSide(double squareSize)
-{
+void cubeSide(double squareSize, double x, double y, double z) {
   // TODO: Have some notion for randomly choosing colors for each square
 
   double squareDisplacement = (squareSize*2) + spacing;
-  // This displacement is such because:
-  // Moving each subsequent square over by a value of 1 squareSize will result in the square perfectly overlapping HALF of the other square (since squareSize represents HALF of the full square size)
-  // Moving each subsequent square over by a value of 2 squareSizes will result in the square perfectly aligning itself RIGHT NEXT to the other square
-  // Adding then the spacing value will give enough spacing between each square to draw the black frame
+  /*
+  This displacement is such because:
+  Moving each subsequent square over by a value of 1 squareSize will result
+  in the square perfectly overlapping HALF of the other square (since squareSize
+  represents HALF of the full square size)
 
+  Moving each subsequent square over by a value of 2 squareSizes will result in
+  the square perfectly aligning itself RIGHT NEXT to the other square
+
+  Adding then the spacing value will give enough spacing between each square to
+   draw the black frame
+  */
+
+  glPushMatrix();
+  //  Offset
+  glTranslated(x,y,z);
+  //glRotated(th,0,1,0);
+
+  double dz = 1;
 
   // top row
-  square(squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
-  square(0,squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
-  square(-squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
+  square(squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
+  square(0,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
+  square(-squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
 
   // bottom row
-  square(squareDisplacement,-squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
-  square(0,-squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
-  square(-squareDisplacement,-squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
+  square(squareDisplacement,-squareDisplacement,0 ,squareSize,squareSize,dz, 0);
+  square(0,-squareDisplacement,0 ,squareSize,squareSize,dz, 0);
+  square(-squareDisplacement,-squareDisplacement,0 ,squareSize,squareSize,dz, 0);
 
   // middle row
-  square(-squareDisplacement,0,0 ,squareSize,squareSize,squareSize, 0);
-  square(0,0,0 ,squareSize,squareSize,squareSize, 0);
-  square(squareDisplacement,0,0 ,squareSize,squareSize,squareSize, 0);
+  square(-squareDisplacement,0,0 ,squareSize,squareSize,dz, 0);
+  square(0,0,0 ,squareSize,squareSize,dz, 0);
+  square(squareDisplacement,0,0 ,squareSize,squareSize,dz, 0);
 
   if (drawSkel == 0) {
     glColor3f(0,0,0);
@@ -152,12 +153,125 @@ void cubeSide(double squareSize)
     square(0,-(squareSize+(spacing/2)), 0 , ((spacing) +(squareSize*3)), (spacing/2),squareSize, 0);
   }
 
+  glPopMatrix();
+
+}
+
+void drawSides(double squareSize, int bw, double x, double y, double z, double dx, double dy, double dz, double th, double ph) {
+  glPushMatrix();
+  //glTranslated(x,y,z);
+  glRotated(ph,0,0,1);
+  glRotated(th,0,1,0);
+  glScaled(dx,dy,dz);
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D,texture[2]);
+
+  double fullSquareSize = squareSize * 2;
+  double squareDisplacement = fullSquareSize + spacing;
+
+  // ORANGE - FRONT
+  (bw == 0) ? glColor3f(.2,.2,.2) : glColor3f(1,.6,0);
+  glBindTexture(GL_TEXTURE_2D,texture[2]);
+  glNormal3d(0, 0, 1);
+  cubeSide(squareSize, x, y, z);
+
+  /*
+  // RED - BACK
+  (bw == 0) ? glColor3f(.55,.55,.55) : glColor3f(1,0,0.2);
+  glNormal3d(0, 0, 1);
+  cubeSide(squareSize, x, y, z+1);
+  */
+
+  /*
+  glRotatef(90,0,1,0);
+  glTranslated(squareDisplacement,0,squareDisplacement);
+  // YELLOW - RIGHT
+  (bw == 0) ? glColor3f(.35,.35,.35) : glColor3f(1,1,0);
+  cubeSide(squareSize);
+
+
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D,texture[2]);
+  glRotatef(-180,0,1,0);
+  glTranslated(0,0,((fullSquareSize*2)+(spacing*2)));
+  // WHITE - LEFT
+  glColor3f(1,1,1);
+  cubeSide(squareSize);
+
+  glBindTexture(GL_TEXTURE_2D,texture[2]);
+  glRotatef(-90,0,1,0);
+  glTranslated(-squareDisplacement,0,squareDisplacement);
+  // RED - BACK
+  (bw == 0) ? glColor3f(.55,.55,.55) : glColor3f(1,0,0.2);
+  cubeSide(squareSize);
+
+
+  glBindTexture(GL_TEXTURE_2D,texture[2]);
+  glRotatef(90,1,0,0);
+  glTranslated(0,-squareDisplacement,-((fullSquareSize*2)+spacing));
+  // GREEN - TOP
+  (bw == 0) ? glColor3f(.1,.1,.1) : glColor3f(.5,.8,.2);
+  cubeSide(squareSize);
+
+
+  glBindTexture(GL_TEXTURE_2D,texture[2]);
+  glNormal3d(0,0,1);
+  glTranslated(0,0,((fullSquareSize*3)+(spacing*2)));
+  // BLUE - BOTTOM
+  (bw == 0) ? glColor3f(.8,.8,.8) : glColor3f(0,0,.8);
+  cubeSide(squareSize);
+
+*/
+  glDisable(GL_TEXTURE_2D);
+  glPopMatrix();
 }
 
 
+static void square(double x,double y,double z, double dx,double dy,double dz, double th) {
+  float white[] = {1,1,1,1};
+  float Emission[]  = {0.0,0.0,0.01*emission,1.0};
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+  //  Save transformation
+  glPushMatrix();
+  //  Offset
+  glTranslated(x,y,z);
+  //glRotated(th,0,1,0);
+  glScaled(dx,dy,dz);
 
-void drawDesk() {
+
+  glBegin(GL_QUADS);
+
+  glTexCoord2f(0,0);
+  glVertex3f(-1,-1, 0);
+
+  glTexCoord2f(1,0);
+  glVertex3f(+1,-1, 0);
+
+  glTexCoord2f(1,1);
+  glVertex3f(+1,+1, 0);
+
+  glTexCoord2f(0,1);
+  glVertex3f(-1,+1, 0);
+  glEnd();
+  //  Undo transofrmations
+  glPopMatrix();
+}
+
+void drawDesk(double x,double y,double z, double dx,double dy,double dz, double th) {
+  glPushMatrix();
+  glTranslated(x,y,z);
+  glRotated(ph,0,0,1);
+  glRotated(th,0,1,0);
+  glScaled(dx,dy,dz);
   // Draw the four legs
+  drawTableLeg((-4 + x),0,(2+z),1,1,1,0);
+  drawTableLeg((4 + x),0,(2+z),1,1,1,0);
+  drawTableLeg((-4 + x),0,(-2+z),1,1,1,0);
+  drawTableLeg((4 + x),0,(-2+z),1,1,1,0);
+  /*
   drawTableLeg(-4,-5,2,1,1,1,0);
   drawTableLeg(4,-5,2,1,1,1,0);
   drawTableLeg(-4,-5,-2,1,1,1,0);
@@ -168,6 +282,8 @@ void drawDesk() {
   drawTableSides(0, -2, 3.20, 1, 1, 1, 0);
   drawTableSides(-5, -2, .70, .5, 1, 1, 90);
   drawTableSides(5, -2, .70, .5, 1, 1, 90);
+  */
+  glPopMatrix();
 }
 
 void drawTableLeg(double x, double y, double z, double dx, double dy, double dz, double th) {
@@ -183,10 +299,54 @@ void drawTableLeg(double x, double y, double z, double dx, double dy, double dz,
   drawTableLegSide(0, 0, 1.4, .3, 3, 1, 180);
   glPopMatrix();
 }
+
+
+// Draws an individual table leg which consists of four vertical rectangles with a table leg at the bottom of each one
+// The table leg can be either a fatter cube towards the bottom, or a square, flat topped pyarmid (four trapezoids)
+void drawTableLegSide(double x, double y, double z, double dx, double dy, double dz, double th) {
+
+  float white[] = {1,1,1,1};
+  float Emission[]  = {0.0,0.0,0.01*emission,1.0};
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D,texture[0]);
+  //  Save transformation
+  glPushMatrix();
+  //  Offset
+  glTranslated(x,y,z);
+  glRotated(th,0,1,0);
+  glScaled(dx,dy,dz);
+
+
+  glBegin(GL_QUADS);
+
+  glTexCoord2f(0,0);
+  glVertex3f(-1,-1, 1);
+
+  glTexCoord2f(1,0);
+  glVertex3f(+1,-1, 1);
+
+  glTexCoord2f(1,1);
+  glVertex3f(+1,+1, 1);
+
+  glTexCoord2f(0,1);
+  glVertex3f(-1,+1, 1);
+  glNormal3d(0,0,-1);
+  glEnd();
+  //  Undo transofrmations
+  glPopMatrix();
+
+
+}
+
 // The table top will be made up two large horizontal rectangular planes that extend BEYOND
 // the table legs, and have four smaller rectangles at each side. (A 3D rectangular slab)
-
-
 void drawTableTop(double x, double y, double z, double dx, double dy, double dz, double th) {
   glPushMatrix();
   glTranslated(x,y,z);
@@ -266,154 +426,11 @@ void drawTableSides(double x, double y, double z, double dx, double dy, double d
   glPopMatrix();
 }
 
-// Draws an individual table leg which consists of four vertical rectangles with a table leg at the bottom of each one
-// The table leg can be either a fatter cube towards the bottom, or a square, flat topped pyarmid (four trapezoids)
-void drawTableLegSide(double x, double y, double z, double dx, double dy, double dz, double th) {
-
-  float white[] = {1,1,1,1};
-  float Emission[]  = {0.0,0.0,0.01*emission,1.0};
-  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
-
-  glEnable(GL_TEXTURE_2D);
-  glEnable(GL_POLYGON_OFFSET_FILL);
-  glEnable(GL_TEXTURE_2D);
-  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
-  glBindTexture(GL_TEXTURE_2D,texture[0]);
-  //  Save transformation
-  glPushMatrix();
-  //  Offset
-  glTranslated(x,y,z);
-  glRotated(th,0,1,0);
-  glScaled(dx,dy,dz);
-
-
-  glBegin(GL_QUADS);
-
-  glTexCoord2f(0,0);
-  glVertex3f(-1,-1, 1);
-
-  glTexCoord2f(1,0);
-  glVertex3f(+1,-1, 1);
-
-  glTexCoord2f(1,1);
-  glVertex3f(+1,+1, 1);
-
-  glTexCoord2f(0,1);
-  glVertex3f(-1,+1, 1);
-  glNormal3d(0,0,-1);
-  glEnd();
-  //  Undo transofrmations
-  glPopMatrix();
-
-
-}
-
-
-void drawSides(double squareSize, int bw, double x, double y, double z, double dx, double dy, double dz, double th, double ph) {
-
-
-  glPushMatrix();
-  glTranslated(x,y,z);
-  glRotated(ph,0,0,1);
-  glRotated(th,0,1,0);
-  glScaled(dx,dy,dz);
-  glEnable(GL_TEXTURE_2D);
-  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
-  glBindTexture(GL_TEXTURE_2D,texture[0]);
-
-  double fullSquareSize = squareSize * 2;
-  double squareDisplacement = fullSquareSize + spacing;
-
-  // ORANGE - FRONT
-  (bw == 0) ? glColor3f(.2,.2,.2) : glColor3f(1,.6,0);
-  glBindTexture(GL_TEXTURE_2D,texture[0]);
-  cubeSide(squareSize);
-
-
-  glBindTexture(GL_TEXTURE_2D,texture[5]);
-  glRotatef(90,0,1,0);
-  glTranslated(squareDisplacement,0,squareDisplacement);
-  // YELLOW - RIGHT
-  (bw == 0) ? glColor3f(.35,.35,.35) : glColor3f(1,1,0);
-  cubeSide(squareSize);
-  glDisable(GL_TEXTURE_2D);
-
-
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D,texture[2]);
-  glRotatef(-180,0,1,0);
-  glTranslated(0,0,((fullSquareSize*2)+(spacing*2)));
-  // WHITE - LEFT
-  glColor3f(1,1,1);
-  cubeSide(squareSize);
-
-  glBindTexture(GL_TEXTURE_2D,texture[4]);
-  glRotatef(-90,0,1,0);
-  glTranslated(-squareDisplacement,0,squareDisplacement);
-  // RED - BACK
-  (bw == 0) ? glColor3f(.55,.55,.55) : glColor3f(1,0,0.2);
-  cubeSide(squareSize);
-
-
-  glBindTexture(GL_TEXTURE_2D,texture[1]);
-  glRotatef(90,1,0,0);
-  glTranslated(0,-squareDisplacement,-((fullSquareSize*2)+spacing));
-  // GREEN - TOP
-  (bw == 0) ? glColor3f(.1,.1,.1) : glColor3f(.5,.8,.2);
-  cubeSide(squareSize);
-
-
-  glBindTexture(GL_TEXTURE_2D,texture[3]);
-  glNormal3d(0,0,1);
-  glTranslated(0,0,((fullSquareSize*3)+(spacing*2)));
-  // BLUE - BOTTOM
-  (bw == 0) ? glColor3f(.8,.8,.8) : glColor3f(0,0,.8);
-  cubeSide(squareSize);
-
-  glDisable(GL_TEXTURE_2D);
-  glPopMatrix();
-}
-
-
-static void square(double x,double y,double z, double dx,double dy,double dz, double th) {
-  float white[] = {1,1,1,1};
-  float Emission[]  = {0.0,0.0,0.01*emission,1.0};
-  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
-  //  Save transformation
-  glPushMatrix();
-  //  Offset
-  glTranslated(x,y,z);
-  //glRotated(th,0,1,0);
-  glScaled(dx,dy,dz);
-
-
-  glBegin(GL_QUADS);
-
-  glTexCoord2f(0,0);
-  glVertex3f(-1,-1, 1);
-
-  glTexCoord2f(1,0);
-  glVertex3f(+1,-1, 1);
-
-  glTexCoord2f(1,1);
-  glVertex3f(+1,+1, 1);
-
-  glTexCoord2f(0,1);
-  glVertex3f(-1,+1, 1);
-  glEnd();
-  //  Undo transofrmations
-  glPopMatrix();
-}
 
 /*
 *  OpenGL (GLUT) calls this routine to display the scene
 */
-void display()
-{
+void display() {
   const double len=1.5;  //  Length of axes
   //  Erase the window and the depth buffer
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
@@ -423,8 +440,7 @@ void display()
   //  Undo previous transformations
   glLoadIdentity();
   //  Perspective - set eye position
-  if (mode)
-  {
+  if (mode) {
     double Ex = -2*dim*Sin(th)*Cos(ph);
     double Ey = +2*dim        *Sin(ph);
     double Ez = +2*dim*Cos(th)*Cos(ph);
@@ -432,14 +448,11 @@ void display()
     glTranslated(-xpos, -ypos, -zpos);
   }
   //  Orthogonal - set world orientation
-  else
-  {
+  else {
     glRotatef(ph,1,0,0);
     glRotatef(th,0,1,0);
     glTranslated(-xpos, -ypos, -zpos);
   }
-  //  Draw A cube
-
   //  Flat or smooth shading
   glShadeModel(smooth ? GL_SMOOTH : GL_FLAT);
 
@@ -463,6 +476,7 @@ void display()
     glEnable(GL_LIGHTING);
     //  Location of viewer for specular calculations
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,local);
+    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
     //  glColor sets ambient and diffuse color materials
     glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
@@ -489,38 +503,29 @@ void display()
 
 
 
-  drawDesk();
-  glRotated(cubeRotate, 0, .1, 0);
-  glTranslated(1.65, 0, -1.6);
-  drawSides(.45, 1, -1, 1.6, 2, 1, 1, 1, 45, 45);
-  //glTranslated(0,4,-4);
-  //  Draw axes
+  //drawDesk(0, 0, 0, 1, 1, 1, 0);
+  //glRotated(cubeRotate, 0, .1, 0);
+  //glTranslated(1.65, 0, -1.6);
+  double cubeSize = 1.5;
+  int BW = 1;
+  double xLoc = 0;
+  double yLoc = 0;
+  double zLoc = 0;
+  double xSize = 1;
+  double ySize = 1;
+  double zSize = 1;
+  double angRot = 0;
+  double angElevation = 0;
+
+  drawSides(cubeSize, BW, xLoc, yLoc, zLoc, xSize, ySize, zSize, angRot, angElevation);
+  //drawSides(.45, 1, -1, 1.6, 2, 1, 1, 1, 45, 45);
+
   glColor3f(1,1,1);
-  if (axes)
-  {
-    glBegin(GL_LINES);
-    glVertex3d(0.0,0.0,0.0);
-    glVertex3d(len,0.0,0.0);
-    glVertex3d(0.0,0.0,0.0);
-    glVertex3d(0.0,len,0.0);
-    glVertex3d(0.0,0.0,0.0);
-    glVertex3d(0.0,0.0,len);
-    glEnd();
-    //  Label axes
-    glRasterPos3d(len,0.0,0.0);
-    Print("X");
-    glRasterPos3d(0.0,len,0.0);
-    Print("Y");
-    glRasterPos3d(0.0,0.0,len);
-    Print("Z");
-  }
   //  Display parameters
 
   glColor3f(.2,.3,.8);
   glWindowPos2i(5,5);
   Print("Angle=%d,%d  Dim=%.1f FOV=%d Projection=%s",th,ph,dim,fov,mode?"Perpective":"Orthogonal");;
-  //  Render the scene and make it visible
-
   glFlush();
   glutSwapBuffers();
 
@@ -630,8 +635,7 @@ void drawFloor() {
 /*
 *  GLUT calls this routine when an arrow key is pressed
 */
-void special(int key,int x,int y)
-{
+void special(int key,int x,int y) {
   //  Right arrow key - increase angle by 5 degrees
   if (key == GLUT_KEY_RIGHT)
   th += 5;
@@ -668,8 +672,7 @@ void special(int key,int x,int y)
 /*
 *  GLUT calls this routine when a key is pressed
 */
-void key(unsigned char ch,int x,int y)
-{
+void key(unsigned char ch,int x,int y) {
 
   glLoadIdentity();
 
@@ -795,16 +798,14 @@ void key(unsigned char ch,int x,int y)
 
   //  Reproject
   Project();
-  glutIdleFunc(idle);
-  //  Tell GLUT it is necessary to redisplay the scene
+  glutIdleFunc(sunMovement?idle:NULL);  //  Tell GLUT it is necessary to redisplay the scene
   glutPostRedisplay();
 }
 
 /*
 *  GLUT calls this routine when the window is resized
 */
-void reshape(int width,int height)
-{
+void reshape(int width,int height) {
   //  Ratio of the width to the height of the window
   asp = (height>0) ? (double)width/height : 1;
   //  Set the viewport to the entire window
@@ -816,8 +817,7 @@ void reshape(int width,int height)
 /* This function gets called continously when the window isn't busy loading a window resize or some other action
 * This idle() function is a good place to put continuous animiation that we want to have play out throughout the
 * duration of the program */
-void idle()
-{
+void idle() {
   //  Elapsed time in seconds
   double t = glutGet(GLUT_ELAPSED_TIME)/sunSpeed;
   zh = fmod(90*t,360.0);
@@ -829,12 +829,11 @@ void idle()
 /*
 *  Start up GLUT and tell it what to do
 */
-int main(int argc,char* argv[])
-{
+int main(int argc,char* argv[]) {
   th=0;
   ph=0;
   mode = 1;
-  dim = 4.3;
+  dim = 7.3;
   //  Initialize GLUT
   glutInit(&argc,argv);
   //  Request double buffered, true color window with Z buffering at 600x600
