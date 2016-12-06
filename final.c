@@ -4,7 +4,7 @@
 
 
 int drawSkel = 0;
-unsigned int texture[7]; // Texture names
+unsigned int texture[10]; // Texture names
 
 #define Dfloor  16
 #define YfloorMin -8
@@ -54,48 +54,20 @@ static void Project()
   glLoadIdentity();
 }
 
-void cubeSide(double squareSize)
-{
-  // TODO: Have some notion for randomly choosing colors for each square
-
-  double squareDisplacement = (squareSize*2) + spacing;
-  // This displacement is such because:
-  // Moving each subsequent square over by a value of 1 squareSize will result in the square perfectly overlapping HALF of the other square (since squareSize represents HALF of the full square size)
-  // Moving each subsequent square over by a value of 2 squareSizes will result in the square perfectly aligning itself RIGHT NEXT to the other square
-  // Adding then the spacing value will give enough spacing between each square to draw the black frame
 
 
-  // top row
-  square(squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
-  square(0,squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
-  square(-squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
-  // bottom row
-  square(squareDisplacement,-squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
-  square(0,-squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
-  square(-squareDisplacement,-squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
 
-  // middle row
-  square(-squareDisplacement,0,0 ,squareSize,squareSize,squareSize, 0);
-  square(0,0,0 ,squareSize,squareSize,squareSize, 0);
-  square(squareDisplacement,0,0 ,squareSize,squareSize,squareSize, 0);
 
-  if (drawSkel == 0) {
-    glColor3f(0,0,0);
-    square((squareSize + (spacing/2)),0, 0 , (spacing/2), ((spacing) +(squareSize*3)),squareSize, 0);
-    square(-(squareSize + (spacing/2)),0, 0 , (spacing/2), ((spacing) +(squareSize*3)),squareSize, 0);
 
-    square(0,(squareSize+(spacing/2)), 0 , ((spacing) +(squareSize*3)), (spacing/2),squareSize, 0);
-    square(0,-(squareSize+(spacing/2)), 0 , ((spacing) +(squareSize*3)), (spacing/2),squareSize, 0);
-  }
-
-}
 
 /*
 *  Draw vertex in polar coordinates with normal
 */
 /* What this function will be useful for is placing a vertex (and the corresponding normal for that vertex)
-* anywhere in the scene. Because it is using polar coordinates, we can easily construct an entire sphere made up of vertexes and their corresponding normals.
-* Once our entire sphere is made up of normals, we can send light at it and have behave as a 3D sphere would (because it has all (or several thousands) of its normal surfaces defined).
+* anywhere in the scene. Because it is using polar coordinates, we can easily construct an entire sphere
+  made up of vertexes and their corresponding normals.
+* Once our entire sphere is made up of normals, we can send light at it and have behave as a 3D sphere would
+ (because it has all (or several thousands) of its normal surfaces defined).
 */
 static void Vertex(double th,double ph)
 {
@@ -142,6 +114,48 @@ static void sun(double x,double y,double z,double r)
 }
 
 
+
+
+
+void cubeSide(double squareSize)
+{
+  // TODO: Have some notion for randomly choosing colors for each square
+
+  double squareDisplacement = (squareSize*2) + spacing;
+  // This displacement is such because:
+  // Moving each subsequent square over by a value of 1 squareSize will result in the square perfectly overlapping HALF of the other square (since squareSize represents HALF of the full square size)
+  // Moving each subsequent square over by a value of 2 squareSizes will result in the square perfectly aligning itself RIGHT NEXT to the other square
+  // Adding then the spacing value will give enough spacing between each square to draw the black frame
+
+
+  // top row
+  square(squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
+  square(0,squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
+  square(-squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
+
+  // bottom row
+  square(squareDisplacement,-squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
+  square(0,-squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
+  square(-squareDisplacement,-squareDisplacement,0 ,squareSize,squareSize,squareSize, 0);
+
+  // middle row
+  square(-squareDisplacement,0,0 ,squareSize,squareSize,squareSize, 0);
+  square(0,0,0 ,squareSize,squareSize,squareSize, 0);
+  square(squareDisplacement,0,0 ,squareSize,squareSize,squareSize, 0);
+
+  if (drawSkel == 0) {
+    glColor3f(0,0,0);
+    square((squareSize + (spacing/2)),0, 0 , (spacing/2), ((spacing) +(squareSize*3)),squareSize, 0);
+    square(-(squareSize + (spacing/2)),0, 0 , (spacing/2), ((spacing) +(squareSize*3)),squareSize, 0);
+
+    square(0,(squareSize+(spacing/2)), 0 , ((spacing) +(squareSize*3)), (spacing/2),squareSize, 0);
+    square(0,-(squareSize+(spacing/2)), 0 , ((spacing) +(squareSize*3)), (spacing/2),squareSize, 0);
+  }
+
+}
+
+
+
 void drawDesk() {
   // Draw the four legs
   drawTableLeg(-4,-5,2,1,1,1,0);
@@ -174,7 +188,6 @@ void drawTableLeg(double x, double y, double z, double dx, double dy, double dz,
 
 
 void drawTableTop(double x, double y, double z, double dx, double dy, double dz, double th) {
-  int i,j;
   glPushMatrix();
   glTranslated(x,y,z);
   glRotated(th,0,1,0);
@@ -212,8 +225,6 @@ void drawTableTop(double x, double y, double z, double dx, double dy, double dz,
   glDisable(GL_TEXTURE_2D);
   glPopMatrix();
 }
-
-
 
 
 void drawTableSides(double x, double y, double z, double dx, double dy, double dz, double th) {
@@ -439,7 +450,10 @@ void display()
     float Position[]  = {sunDistance*Cos(zh),sunElevation,sunDistance*Sin(zh),1.0};
     //  Draw light position as ball (still no lighting here)
 
-    /* The light obviously doesn't come from physically creating the sun object below in the scene. Whether we draw this sun object or not is not significant. However, the scene does make more sense if the user can see where the light is actively coming from. We acheive this illusion (openGL lighting seemingly 'coming' from our sun) by using the idle function to update the physical position of the sun, and then simultanously updating the lighting position as well*/
+    /* The light obviously doesn't come from physically creating the sun object below in the scene.
+    Whether we draw this sun object or not is not significant. However, the scene does make more sense if the
+     user can see where the light is actively coming from. We acheive this illusion (openGL lighting seemingly 'coming' from our sun)
+      by using the idle function to update the physical position of the sun, and then simultanously updating the lighting position as well*/
     if (seeSun)
     sun(Position[0],Position[1],Position[2] , 0.3);
 
@@ -474,8 +488,9 @@ void display()
 
 
 
+
   drawDesk();
-  glRotated(zh, 0, .1, 0);
+  glRotated(cubeRotate, 0, .1, 0);
   glTranslated(1.65, 0, -1.6);
   drawSides(.45, 1, -1, 1.6, 2, 1, 1, 1, 45, 45);
   //glTranslated(0,4,-4);
@@ -512,42 +527,6 @@ void display()
 }
 
 
-void drawFloor() {
-  float white[] = {1,1,1,1};
-  float Emission[]  = {0.0,0.0,0.01*emission,1.0};
-  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
-
-  glEnable(GL_TEXTURE_2D);
-  glEnable(GL_POLYGON_OFFSET_FILL);
-  glEnable(GL_TEXTURE_2D);
-  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
-  glBindTexture(GL_TEXTURE_2D,texture[5]);
-  //  Save transformation
-  glPushMatrix();
-  //  Offset
-  //glScaled(dx,dy,dz);
-
-
-  glBegin(GL_QUADS);
-
-  glTexCoord2f(0,0);
-  glVertex3f(-Dfloor, YfloorMin, Dfloor);
-
-  glTexCoord2f(1,0);
-  glVertex3f(Dfloor, YfloorMin, Dfloor);
-
-  glTexCoord2f(1,1);
-  glVertex3f(Dfloor, YfloorMin, -Dfloor);
-
-  glTexCoord2f(0,1);
-  glVertex3f(-Dfloor, YfloorMin, -Dfloor);
-  glNormal3d(0,-1,0);
-  glEnd();
-  //  Undo transofrmations
-  glPopMatrix();
-}
 
 void drawWalls(double x,double y,double z, double dx,double dy,double dz, double th, int style) {
   float white[] = {1,1,1,1};
@@ -561,13 +540,13 @@ void drawWalls(double x,double y,double z, double dx,double dy,double dz, double
   glEnable(GL_TEXTURE_2D);
   glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
   if (style == 1) glBindTexture(GL_TEXTURE_2D,texture[6]);
-  else glBindTexture(GL_TEXTURE_2D,texture[2]);
+  else glBindTexture(GL_TEXTURE_2D,texture[7]);
   //  Save transformation
   glPushMatrix();
   //  Offset
   glTranslated(x,y,z);
   glRotated(th,0,1,0);
-  //glScaled(dx,dy,dz);
+  glScaled(dx,dy,dz);
 
 
   glBegin(GL_QUADS);
@@ -599,7 +578,7 @@ void drawCeiling() {
   glBindTexture(GL_TEXTURE_2D,texture[4]);
   glPolygonOffset(1,1);
   glColor3f(1,1,1);
-  glNormal3f(1,0,0);
+  glNormal3f(0,-1,0);
   for (j=-Dfloor;j<Dfloor;j++)
   {
     glBegin(GL_QUAD_STRIP);
@@ -612,6 +591,40 @@ void drawCeiling() {
   }
   glDisable(GL_POLYGON_OFFSET_FILL);
   glDisable(GL_TEXTURE_2D);
+}
+
+void drawFloor() {
+
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D,texture[5]);
+  //  Save transformation
+  //glPushMatrix();
+  //  Offset
+  //glScaled(dx,dy,dz);
+
+  glNormal3d(0,1,0);
+
+  glBegin(GL_QUADS);
+
+  glTexCoord2f(0,0);
+  glVertex3f(-Dfloor, YfloorMin, Dfloor);
+
+  glTexCoord2f(1,0);
+  glVertex3f(Dfloor, YfloorMin, Dfloor);
+
+  glTexCoord2f(1,1);
+  glVertex3f(Dfloor, YfloorMin, -Dfloor);
+
+  glTexCoord2f(0,1);
+  glVertex3f(-Dfloor, YfloorMin, -Dfloor);
+  glEnd();
+  glDisable(GL_POLYGON_OFFSET_FILL);
+  glDisable(GL_TEXTURE_2D);
+  //  Undo transofrmations
+  //glPopMatrix();
 }
 
 /*
@@ -633,15 +646,15 @@ void special(int key,int x,int y)
   //  Down arrow key - decrease elevation by 5 degrees
   else if (key == GLUT_KEY_DOWN) {
     if (ph > -25) ph -= 5;
-}
+  }
   //  PageUp key - increase dim
   else if (key == GLUT_KEY_PAGE_UP) {
     if (dim < 8.4) dim += 0.1;
-}
+  }
   //  PageDown key - decrease dim
   else if (key == GLUT_KEY_PAGE_DOWN && dim>1) {
     if (dim > 4.4) dim -= 0.1;
-}
+  }
   //  Keep angles to +/-360 degrees
   th %= 360;
   ph %= 360;
@@ -662,12 +675,13 @@ void key(unsigned char ch,int x,int y)
 
   //  Reset everything to starting point
   if (ch == '0') {
-    th = 30;
-    ph = 30;
-    dim = 6.0;
+    th = 0;
+    ph = -15;
+    dim = 8.5;
     xpos = 0;
     ypos = 0;
     zpos = 0;
+    fov = 55;
     sunSpeed = 1000.0;
     sunDistance = 5;
     sunElevation = 1;
@@ -771,10 +785,17 @@ void key(unsigned char ch,int x,int y)
     zpos -= (float)(cos(xrotrad)*cos(yrotrad));
   }
 
+  else if (ch=='b') {
+    diffuse = 100;
+  }
+  else if (ch=='B') {
+    diffuse = 0;
+  }
+
 
   //  Reproject
   Project();
-  glutIdleFunc(sunMovement?idle:NULL);
+  glutIdleFunc(idle);
   //  Tell GLUT it is necessary to redisplay the scene
   glutPostRedisplay();
 }
@@ -800,6 +821,7 @@ void idle()
   //  Elapsed time in seconds
   double t = glutGet(GLUT_ELAPSED_TIME)/sunSpeed;
   zh = fmod(90*t,360.0);
+  cubeRotate = fmod(90*t,360.0);
   //  Tell GLUT it is necessary to redisplay the scene
   glutPostRedisplay();
 }
@@ -810,9 +832,9 @@ void idle()
 int main(int argc,char* argv[])
 {
   th=0;
-  ph=-15;
+  ph=0;
   mode = 1;
-  dim = 8.5;
+  dim = 4.3;
   //  Initialize GLUT
   glutInit(&argc,argv);
   //  Request double buffered, true color window with Z buffering at 600x600
@@ -835,6 +857,7 @@ int main(int argc,char* argv[])
   texture[4] = LoadTexBMP("popcorn.bmp");
   texture[5] = LoadTexBMP("basketball-floor-texture.bmp");
   texture[6] = LoadTexBMP("chalkboard.bmp");
+  texture[7] = LoadTexBMP("brickwall.bmp");
   //  texture[1] = LoadTexBMP("carbon.bmp");
   //  texture[2] = LoadTexBMP("carbon.bmp");
   //  texture[3] = LoadTexBMP("carbon.bmp");

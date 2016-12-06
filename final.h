@@ -75,13 +75,11 @@ int emission  =   0;  // Emission intensity (%)
 int shininess =   0;  // Shininess (power of two)
 float shiny   =   1;  // Shininess (value)
 int zh        =  90;  // Light azimuth
+int cubeRotate        =  90;
 float ylight  =   0;  // Elevation of light
 int light = 1;
 
 
-//  Macro for sin & cos in degrees
-#define Cos(th) cos(3.1415927/180*(th))
-#define Sin(th) sin(3.1415927/180*(th))
 
 
 #define LEN 8192  //  Maximum length of text string

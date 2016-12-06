@@ -1,1 +1,0 @@
-Final Rubiks Cube Project
