@@ -50,7 +50,7 @@ double asp=1;     //  Aspect ratio
 double dim=6.0;   //  Size of world
 
 double sunSpeed = 1000.0;
-int sunDistance = 5;
+int sunDistance = 8;
 float sunElevation = 1;
 int sunMovement = 1;
 int seeSun = 1;

@@ -130,6 +130,7 @@ void cubeSide(double squareSize, double x, double y, double z) {
   double dz = 1;
 
   // top row
+  /*
   square(squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
   square(0,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
   square(-squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
@@ -141,8 +142,9 @@ void cubeSide(double squareSize, double x, double y, double z) {
 
   // middle row
   square(-squareDisplacement,0,0 ,squareSize,squareSize,dz, 0);
+  */
   square(0,0,0 ,squareSize,squareSize,dz, 0);
-  square(squareDisplacement,0,0 ,squareSize,squareSize,dz, 0);
+  //square(squareDisplacement,0,0 ,squareSize,squareSize,dz, 0);
 
   if (drawSkel == 0) {
     glColor3f(0,0,0);
@@ -173,22 +175,21 @@ void drawSides(double squareSize, int bw, double x, double y, double z, double d
   // ORANGE - FRONT
   (bw == 0) ? glColor3f(.2,.2,.2) : glColor3f(1,.6,0);
   glBindTexture(GL_TEXTURE_2D,texture[2]);
-  glNormal3d(0, 0, 1);
-  cubeSide(squareSize, x, y, z);
 
-  /*
+  glNormal3d(0, 0, 1);
+  cubeSide(squareSize, x, y, z-4.6);
+
   // RED - BACK
   (bw == 0) ? glColor3f(.55,.55,.55) : glColor3f(1,0,0.2);
   glNormal3d(0, 0, 1);
-  cubeSide(squareSize, x, y, z+1);
-  */
+  cubeSide(squareSize, x, y, z+4.6);
 
-  /*
   glRotatef(90,0,1,0);
-  glTranslated(squareDisplacement,0,squareDisplacement);
+  glTranslated(0,0,4.6);
   // YELLOW - RIGHT
   (bw == 0) ? glColor3f(.35,.35,.35) : glColor3f(1,1,0);
-  cubeSide(squareSize);
+  glNormal3d(0, 0, 1);
+  cubeSide(squareSize, x, y, z);
 
 
   glEnable(GL_TEXTURE_2D);
@@ -199,6 +200,7 @@ void drawSides(double squareSize, int bw, double x, double y, double z, double d
   glColor3f(1,1,1);
   cubeSide(squareSize);
 
+  /*
   glBindTexture(GL_TEXTURE_2D,texture[2]);
   glRotatef(-90,0,1,0);
   glTranslated(-squareDisplacement,0,squareDisplacement);
@@ -525,7 +527,7 @@ void display() {
 
   glColor3f(.2,.3,.8);
   glWindowPos2i(5,5);
-  Print("Angle=%d,%d  Dim=%.1f FOV=%d Projection=%s",th,ph,dim,fov,mode?"Perpective":"Orthogonal");;
+  Print("Angle=%d,%d  Dim=%.1f FOV=%d xpos=%.3f ypos=%.3f zpos=%.3f",th,ph,dim,fov, xpos, ypos, zpos);
   glFlush();
   glutSwapBuffers();
 
@@ -754,15 +756,15 @@ void key(unsigned char ch,int x,int y) {
   if (ch=='k') {
     float yrotrad;
     yrotrad = (th * (3.141592654f / 180));
-    xpos += (float)(cos(yrotrad)) * 0.2;
-    zpos += (float)(sin(yrotrad)) * 0.2;
+    xpos += (float)(cos(yrotrad)) * 0.1;
+    zpos += (float)(sin(yrotrad)) * 0.1;
   }
 
   if (ch=='j') {
     float yrotrad;
     yrotrad = (th * (3.141592654f / 180));
-    xpos -= (float)(cos(yrotrad)) * 0.2;
-    zpos -= (float)(sin(yrotrad)) * 0.2;
+    xpos -= (float)(cos(yrotrad)) * 0.1;
+    zpos -= (float)(sin(yrotrad)) * 0.1;
   }
 
   /* Navigating forward and backwards */
@@ -838,7 +840,7 @@ int main(int argc,char* argv[]) {
   glutInit(&argc,argv);
   //  Request double buffered, true color window with Z buffering at 600x600
   glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
-  glutInitWindowSize(600,600);
+  glutInitWindowSize(800,800);
   glutCreateWindow("Final Project Alex Tzinov");
 
   glClearColor( .5, .5, .5, 1);
