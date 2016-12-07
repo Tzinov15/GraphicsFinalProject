@@ -392,7 +392,9 @@ void drawDesk(double x,double y,double z, double dx,double dy,double dz, double 
   drawTableLeg((-4 + x),y,(-2+z),1,1,1,0);
   drawTableLeg((4 + x),y,(-2+z),1,1,1,0);
 
+  glNormal3d(0,1,0);
   drawTableTop(x, 5.3+y, z+.7, 1, 1, .5, 0);
+  glNormal3d(0,-1,0);
   drawTableTop(x, 5+y, z+.7, 1, 1, .5, 0);
   drawTableSides(x, 3+y, -1.80+z, 1, 1, 1, 0);
   drawTableSides(x, 3+y, 3.20+z, 1, 1, 1, 0);
@@ -409,6 +411,7 @@ void drawTableLeg(double x, double y, double z, double dx, double dy, double dz,
   glTranslated(x,y,z);
   glScaled(dx,dy,dz);
 
+  glNormal3d(0,0,1);
   drawTableLegSide(0, 0, 0, .3, 3, 1, 0);
   drawTableLegSide(-.7, 0, .7, .3, 3, 1, 90);
   drawTableLegSide(.7, 0, .7, .3, 3, 1, -90);
@@ -453,7 +456,6 @@ void drawTableLegSide(double x, double y, double z, double dx, double dy, double
 
   glTexCoord2f(0,1);
   glVertex3f(-1,+1, 1);
-  glNormal3d(0,0,-1);
   glEnd();
   glDisable(GL_TEXTURE_2D);
   //  Undo transofrmations
@@ -475,10 +477,6 @@ void drawTableTop(double x, double y, double z, double dx, double dy, double dz,
   glBindTexture(GL_TEXTURE_2D,texture[3]);
   glPolygonOffset(1,1);
   //glColor3f(1,1,1);
-  glNormal3f(1,0,0);
-
-
-
 
   glBegin(GL_QUADS);
 
@@ -493,7 +491,6 @@ void drawTableTop(double x, double y, double z, double dx, double dy, double dz,
 
   glTexCoord2f(0,1);
   glVertex3f(-tableSize, -2, tableSize);
-  glNormal3d(0,1,0);
   glEnd();
 
   glDisable(GL_POLYGON_OFFSET_FILL);
@@ -897,6 +894,11 @@ void key(unsigned char ch,int x,int y) {
 
     drawSkel = 1;
     drawFull = 0;
+
+    sunDistance = 20;
+    sunElevation = 8;
+    drawFull = 0;
+    drawSkel = 1;
   }
 
   if (ch == '3') {
@@ -919,6 +921,8 @@ void key(unsigned char ch,int x,int y) {
 
     drawSkel = 1;
     drawFull = 0;
+    sunDistance = 15;
+    sunElevation = -8;
   }
 
 
