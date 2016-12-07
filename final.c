@@ -867,6 +867,7 @@ void key(unsigned char ch,int x,int y) {
     oldfov = fov;
     newfov = 63;
 
+    cubeMovement=1;
 
     sunSpeed = 1000.0;
     sunDistance = 20;
@@ -891,6 +892,7 @@ void key(unsigned char ch,int x,int y) {
 
     oldfov = fov;
     newfov = 63;
+    cubeMovement=1;
 
     olddim = dim;
     newdim = 9.6;
@@ -925,6 +927,7 @@ void key(unsigned char ch,int x,int y) {
     drawSkel = 1;
     drawFull = 0;
     drawCore = 1;
+    cubeMovement=1;
 
     sunDistance = 20;
     sunElevation = 8;
@@ -950,6 +953,7 @@ void key(unsigned char ch,int x,int y) {
     oldfov = fov;
     newfov = 63;
 
+    cubeMovement=1;
     drawSkel = 0;
     drawCore = 1;
     drawFull = 1;
