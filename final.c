@@ -12,17 +12,20 @@ int oldth = 0;
 int newph = 0;
 int oldph = 0;
 
-double newxpos = -1.545;
-double oldxpos = -1.545;
+double newxpos = -2;
+double oldxpos = -2;
 
-double newypos = -.97;
-double oldypos = -.97;
+double newypos = -1;
+double oldypos = -1;
 
-double newzpos = 11.573;
-double oldzpos = 11.573;
+double newzpos = 12;
+double oldzpos = 12;
 
-double newdim = 12.5;
-double olddim = 12.5;
+double newdim = 12;
+double olddim = 12;
+
+double newfov = 63;
+double oldfov = 63;
 
 unsigned int texture[10]; // Texture names
 
@@ -802,7 +805,7 @@ void special(int key,int x,int y) {
   }
   //  PageDown key - decrease dim
   else if (key == GLUT_KEY_PAGE_DOWN && dim>1) {
-    if (dim > 4.4) dim -= 0.1;
+    if (dim > 8.4) dim -= 0.1;
   }
   //  Keep angles to +/-360 degrees
   th %= 360;
@@ -832,21 +835,21 @@ void key(unsigned char ch,int x,int y) {
   if (ch == '0') {
     oldth = th;
     newth = 0;
-
     oldph = ph;
     newph = 0;
-
     oldxpos = xpos;
-    newxpos = -1.545;
-
+    newxpos = -2;
     oldypos = ypos;
-    newypos = -.97;
-
+    newypos = -1;
     oldzpos = zpos;
-    newzpos = 11.573;
+    newzpos = 11;
 
-    dim = 12.5;
-    fov = 63;
+    olddim = dim;
+    newdim = 12;
+
+    oldfov = fov;
+    newfov = 63;
+
     sunSpeed = 1000.0;
     sunDistance = 20;
     sunElevation = 8;
@@ -859,48 +862,65 @@ void key(unsigned char ch,int x,int y) {
     newth = 63;
     oldph = ph;
     newph = 22;
+    oldxpos = xpos;
+    newxpos = 36.7;
+    oldypos = ypos;
+    newypos = .37;
+
+    oldfov = fov;
+    newfov = 63;
 
     olddim = dim;
     newdim = 9.6;
 
-
-
-    oldxpos = xpos;
-    newxpos = 36.7;
-
-    oldypos = ypos;
-    newypos = .37;
-
     oldzpos = zpos;
     newzpos = -36.97;
-    fov = 55;
   }
 
   if (ch == '2') {
     oldth = th;
     newth = 62;
-
     oldph = ph;
     newph = 3;
-
     oldxpos = xpos;
     newxpos = 3.7;
-
     oldypos = ypos;
     newypos = 9.5;
-
     oldzpos = zpos;
     newzpos = -1.637;
-    fov = 55;
-
 
     olddim = dim;
-    newdim = 7.6;
+    newdim = 8.5;
+
+    oldfov = fov;
+    newfov = 36;
 
     drawSkel = 1;
     drawFull = 0;
-    fov = 63;
   }
+
+  if (ch == '3') {
+    oldth = th;
+    newth = 66;
+    oldph = ph;
+    newph = -5;
+    oldxpos = xpos;
+    newxpos = -3;
+    oldypos = ypos;
+    newypos = -6;
+    oldzpos = zpos;
+    newzpos = -8;
+
+    olddim = dim;
+    newdim = 12;
+
+    oldfov = fov;
+    newfov = 63;
+
+    drawSkel = 1;
+    drawFull = 0;
+  }
+
 
 
   //  Exit on ESC
@@ -1096,9 +1116,20 @@ void idle() {
     olddim--;
   }
 
+  if (oldfov < newfov) {
+    fov++;
+    oldfov++;
+  }
+
+  if (oldfov > newfov) {
+    fov--;
+    oldfov--;
+  }
+
   zh = fmod(90*t,360.0);
   cubeRotate = fmod(90*t,360.0);
   //  Tell GLUT it is necessary to redisplay the scene
+  Project();
   glutPostRedisplay();
 }
 
@@ -1108,10 +1139,10 @@ void idle() {
 int main(int argc,char* argv[]) {
     th = 0;
     ph = 0;
-    dim = 12.5;
-    xpos = -1.545;
-    ypos = -.97;
-    zpos = 11.573;
+    dim = 12;
+    xpos = -2;
+    ypos = -1;
+    zpos = 11;
     fov = 63;
     sunSpeed = 1000.0;
     sunDistance = 20;
