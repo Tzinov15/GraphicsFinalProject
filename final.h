@@ -96,6 +96,7 @@ void drawFloor();
 void drawCeiling();
 void drawWalls(double x,double y,double z, double dx,double dy,double dz, double th, int style);
 void drawTableSides(double x, double y, double z, double dx, double dy, double dz, double th);
+void drawCenterBall(double squareSize);
 
 
 

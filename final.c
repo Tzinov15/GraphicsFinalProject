@@ -71,6 +71,40 @@ static void Vertex(double th,double ph) {
 }
 
 
+static void cubeBall(double x,double y,double z,double r) {
+  int th,ph;
+  float yellow[] = {1.0,1.0,0.0,1.0};
+  float Emission[]  = {0.0,0.0,0.01*emission,1.0};
+  //  Save transformation
+  glPushMatrix();
+  //  Offset, scale and rotate
+  glTranslated(x,y,z);
+  glScaled(r,r,r);
+  //  Yellow sun
+  glColor3f(.2,.2,.2);
+  glMaterialf(GL_FRONT,GL_SHININESS,shiny);
+  glMaterialfv(GL_FRONT,GL_SPECULAR,yellow);
+  glMaterialfv(GL_FRONT,GL_EMISSION,Emission);
+  //  Bands of latitude
+  //  Generate bands of rectangles, each rectangle getting a respective surface normal set
+  //  If we decrease the granularity of these rectangles (by increasing the value of inc) and turn off shading
+  //  (set smooth to 0) we can very clearly see each one of these quad bands and how the color of the quad band
+  // is determined by the angle of the light. This angle is relative to the surface normal of the quad which gets
+  //   set here
+  for (ph=-90;ph<90;ph+=inc)
+  {
+    glBegin(GL_QUAD_STRIP);
+    for (th=0;th<=360;th+=2*inc)
+    {
+      Vertex(th,ph);
+      Vertex(th,ph+inc);
+    }
+    glEnd();
+  }
+  //  Undo transofrmations
+  glPopMatrix();
+}
+
 static void sun(double x,double y,double z,double r) {
   int th,ph;
   float yellow[] = {1.0,1.0,0.0,1.0};
@@ -81,7 +115,7 @@ static void sun(double x,double y,double z,double r) {
   glTranslated(x,y,z);
   glScaled(r,r,r);
   //  Yellow sun
-  glColor3f(1,1,.6);
+  glColor3f(1,1,1);
   glMaterialf(GL_FRONT,GL_SHININESS,shiny);
   glMaterialfv(GL_FRONT,GL_SPECULAR,yellow);
   glMaterialfv(GL_FRONT,GL_EMISSION,Emission);
@@ -208,6 +242,17 @@ void drawSides(double squareSize, int bw, double x, double y, double z, double d
   glDisable(GL_TEXTURE_2D);
   glPopMatrix();
 }
+
+
+void drawCenterBall(double squareSize) {
+  GLUquadric* qobj;
+  qobj = gluNewQuadric();
+  gluQuadricNormals(qobj, GLU_SMOOTH);
+  gluCylinder(qobj, 1, 1, .4, 1, 16);
+  cubeBall(0, 0, 0, 2);
+
+}
+
 
 
 static void square(double x,double y,double z, double dx,double dy,double dz, double th) {
