@@ -31,7 +31,7 @@ unsigned int texture[10]; // Texture names
 
 #define Dfloor  36
 #define YfloorMin -12
-#define YfloorMax 16
+#define YfloorMax 20
 
 
 void Print(const char* format , ...) {
@@ -635,7 +635,7 @@ void display() {
   double angElevation = 45;
 
   glPushMatrix();
-  glTranslatef(0, 8, 0);
+  glTranslatef(0, 9.2, 0);
   glRotated(cubeRotate, 0, 1, 0);
   drawSides(cubeSize, BW, xLoc, yLoc, zLoc, xSize, ySize, zSize, angRot, angElevation);
   glPopMatrix();
@@ -660,6 +660,13 @@ void drawCubeStand(double x,double y,double z, double dx,double dy,double dz, do
   glHint(GL_POINT_SMOOTH_HINT, GL_NICEST); //Smooth points
   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST); //Smooth lines
   GLUquadricObj *obj = gluNewQuadric();
+  GLUquadricObj *obj2 = gluNewQuadric();
+
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D,texture[3]);
 
   glPushMatrix();
   glTranslated(x,y,z);
@@ -667,12 +674,18 @@ void drawCubeStand(double x,double y,double z, double dx,double dy,double dz, do
   glScaled(dx,dy,dz);
 
 
-  double cylinderThickness = 2.0;
+  double cylinderThickness = 5.0;
   double cylinderLength = 1.5;
   glColor3f(.8, .8, .8);
   gluQuadricNormals(obj, GLU_SMOOTH);
   glRotated(-90, 1, 0, 0);
-  gluCylinder(obj, cylinderThickness, .3, cylinderLength, 24, 24);
+  gluCylinder(obj, cylinderThickness, 1.5, cylinderLength, 24, 24);
+  glDisable(GL_POLYGON_OFFSET_FILL);
+  glDisable(GL_TEXTURE_2D);
+  glPushMatrix();
+  glTranslated(0, 0, cylinderLength);
+  gluDisk(obj2, 0, 1.5, 24, 24);
+  glPopMatrix();
   glPopMatrix();
 }
 
@@ -802,7 +815,7 @@ void special(int key,int x,int y) {
   }
   //  PageDown key - decrease dim
   else if (key == GLUT_KEY_PAGE_DOWN && dim>1) {
-    if (dim > 8.4) dim -= 0.1;
+    if (dim > 10) dim -= 0.1;
   }
   //  Keep angles to +/-360 degrees
   th %= 360;
