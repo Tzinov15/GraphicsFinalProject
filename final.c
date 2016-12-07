@@ -245,11 +245,29 @@ void drawSides(double squareSize, int bw, double x, double y, double z, double d
 
 
 void drawCenterBall(double squareSize) {
-  GLUquadric* qobj;
-  qobj = gluNewQuadric();
-  gluQuadricNormals(qobj, GLU_SMOOTH);
-  gluCylinder(qobj, 1, 1, .4, 1, 16);
-  cubeBall(0, 0, 0, 2);
+  glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST); //Smooth polygons
+  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); //Best perspective corrections
+  glHint(GL_POINT_SMOOTH_HINT, GL_NICEST); //Smooth points
+  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST); //Smooth lines
+  GLUquadricObj *obj = gluNewQuadric();
+
+  double cubeWidth = ((squareSize * 2) * 3) + (spacing * 2);
+
+  double cylinderThickness = .5;
+  glColor3f(.2, .2, .2);
+  glPushMatrix();
+  glTranslated(0, 0, -cubeWidth/2);
+  gluQuadricNormals(obj, GLU_SMOOTH);
+  gluCylinder(obj, cylinderThickness, cylinderThickness, cubeWidth, 24, 24);
+  glTranslated(0, cubeWidth/2, cubeWidth/2);
+  glRotated(90, 1, 0, 0);
+  gluCylinder(obj, cylinderThickness, cylinderThickness, cubeWidth, 24, 24);
+  glTranslated(-cubeWidth/2, 0, cubeWidth/2);
+  glRotated(90, 0, 1, 0);
+  gluCylinder(obj, cylinderThickness, cylinderThickness, cubeWidth, 24, 24);
+  glPopMatrix();
+
+//  cubeBall(0, 0, 0, 2);
 
 }
 
