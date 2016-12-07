@@ -57,7 +57,6 @@ int seeSun = 1;
 
 
 double spacing = .1;
-double squareSize = .2;
 
 float xpos, ypos, zpos = 0;
 
@@ -85,7 +84,7 @@ int light = 1;
 #define LEN 8192  //  Maximum length of text string
 void Print(const char* format , ...);
 static void Project();
-void cubeSide(double squareSize, double x, double y, double z);
+void cubeSide(double squareSize, double x, double y, double z, double th, double ph);
 void drawSkeleton();
 void drawSides(double squareSize, int bw, double x, double y, double z, double dx, double dy, double dz, double th, double ph);
 static void square(double x,double y,double z, double dx,double dy,double dz, double th);

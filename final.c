@@ -105,7 +105,7 @@ static void sun(double x,double y,double z,double r) {
   glPopMatrix();
 }
 
-void cubeSide(double squareSize, double x, double y, double z) {
+void cubeSide(double squareSize, double x, double y, double z, double th, double ph) {
   // TODO: Have some notion for randomly choosing colors for each square
 
   double squareDisplacement = (squareSize*2) + spacing;
@@ -125,7 +125,8 @@ void cubeSide(double squareSize, double x, double y, double z) {
   glPushMatrix();
   //  Offset
   glTranslated(x,y,z);
-  //glRotated(th,0,1,0);
+  glRotated(th,0,1,0);
+  glRotated(ph,1,0,0);
 
   double dz = 1;
 
@@ -161,7 +162,7 @@ void cubeSide(double squareSize, double x, double y, double z) {
 
 void drawSides(double squareSize, int bw, double x, double y, double z, double dx, double dy, double dz, double th, double ph) {
   glPushMatrix();
-  //glTranslated(x,y,z);
+  glTranslated(x,y,z);
   glRotated(ph,0,0,1);
   glRotated(th,0,1,0);
   glScaled(dx,dy,dz);
@@ -169,59 +170,41 @@ void drawSides(double squareSize, int bw, double x, double y, double z, double d
   glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
   glBindTexture(GL_TEXTURE_2D,texture[2]);
 
-  double fullSquareSize = squareSize * 2;
-  double squareDisplacement = fullSquareSize + spacing;
+
+  drawCenterBall(squareSize);
+
+
+  double cubeWidth = ((squareSize * 2) * 3) + (spacing * 2);
 
   // ORANGE - FRONT
   (bw == 0) ? glColor3f(.2,.2,.2) : glColor3f(1,.6,0);
-  glBindTexture(GL_TEXTURE_2D,texture[2]);
-
   glNormal3d(0, 0, 1);
-  cubeSide(squareSize, x, y, z-4.6);
+  cubeSide(squareSize, x, y, z-(cubeWidth/2), 0, 0);
 
   // RED - BACK
   (bw == 0) ? glColor3f(.55,.55,.55) : glColor3f(1,0,0.2);
   glNormal3d(0, 0, 1);
-  cubeSide(squareSize, x, y, z+4.6);
+  cubeSide(squareSize, x, y, (cubeWidth/2), 0, 0);
 
-  glRotatef(90,0,1,0);
-  glTranslated(0,0,4.6);
   // YELLOW - RIGHT
   (bw == 0) ? glColor3f(.35,.35,.35) : glColor3f(1,1,0);
   glNormal3d(0, 0, 1);
-  cubeSide(squareSize, x, y, z);
-
+  cubeSide(squareSize, (cubeWidth/2), y,z , 90, 0);
 
   // WHITE - LEFT
   glColor3f(1,1,1);
-  glTranslated(0,0,-9.2);
-  cubeSide(squareSize, x, y, z);
+  glNormal3d(0, 0, 1);
+  cubeSide(squareSize, (-cubeWidth/2), y, z, 90, 0);
 
-  /*
-  glBindTexture(GL_TEXTURE_2D,texture[2]);
-  glRotatef(-90,0,1,0);
-  glTranslated(-squareDisplacement,0,squareDisplacement);
-  // RED - BACK
-  (bw == 0) ? glColor3f(.55,.55,.55) : glColor3f(1,0,0.2);
-  cubeSide(squareSize);
-
-
-  glBindTexture(GL_TEXTURE_2D,texture[2]);
-  glRotatef(90,1,0,0);
-  glTranslated(0,-squareDisplacement,-((fullSquareSize*2)+spacing));
   // GREEN - TOP
   (bw == 0) ? glColor3f(.1,.1,.1) : glColor3f(.5,.8,.2);
-  cubeSide(squareSize);
+  glNormal3d(0, 0, 1);
+  cubeSide(squareSize, x, cubeWidth/2, z, 0 ,90);
 
+  (bw == 0) ? glColor3f(.1,.1,.1) : glColor3f(.5,.8,.2);
+  glNormal3d(0, 0, 1);
+  cubeSide(squareSize, x, -cubeWidth/2, z, 0 ,90);
 
-  glBindTexture(GL_TEXTURE_2D,texture[2]);
-  glNormal3d(0,0,1);
-  glTranslated(0,0,((fullSquareSize*3)+(spacing*2)));
-  // BLUE - BOTTOM
-  (bw == 0) ? glColor3f(.8,.8,.8) : glColor3f(0,0,.8);
-  cubeSide(squareSize);
-
-*/
   glDisable(GL_TEXTURE_2D);
   glPopMatrix();
 }
