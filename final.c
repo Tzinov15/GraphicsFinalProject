@@ -139,7 +139,7 @@ static void sun(double x,double y,double z,double r) {
   glPopMatrix();
 }
 
-void cubeSide(double squareSize, double x, double y, double z, double th, double ph) {
+void cubeSide(double squareSize, double x, double y, double z, double th, double ph, double color[], int inOrOout) {
   // TODO: Have some notion for randomly choosing colors for each square
 
   double squareDisplacement = (squareSize*2) + spacing;
@@ -164,8 +164,7 @@ void cubeSide(double squareSize, double x, double y, double z, double th, double
 
   double dz = 1;
 
-  // top row
-  /*
+  glColor3f(color[0], color[1], color[2]);
   square(squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
   square(0,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
   square(-squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
@@ -177,9 +176,50 @@ void cubeSide(double squareSize, double x, double y, double z, double th, double
 
   // middle row
   square(-squareDisplacement,0,0 ,squareSize,squareSize,dz, 0);
-  */
+
   square(0,0,0 ,squareSize,squareSize,dz, 0);
-  //square(squareDisplacement,0,0 ,squareSize,squareSize,dz, 0);
+  if (inOrOout == 0) square(0,0,-.3 ,squareSize,squareSize,dz, 0);
+  if (inOrOout == 1) square(0,0,.3 ,squareSize,squareSize,dz, 0);
+
+  /* Bottom edge */
+  glPushAttrib(GL_COLOR_BUFFER_BIT);
+  glColor3f(.2, .2, .2);
+  glPushMatrix();
+
+
+  glTranslated(0, -squareSize-.3, -.10);
+  glRotated(90, 1, 0, 0);
+  glScaled(1, .1, 1);
+  square(0,0,-.3 ,squareSize,squareSize,dz, 0);
+
+
+
+  glRotated(90,0 , 1, 0);
+  square(0,0,-.3 ,squareSize,squareSize,dz, 0);
+
+  glPopMatrix();
+
+  glPushMatrix();
+
+
+
+  glTranslated(0, squareSize+.3, -.10);
+  glRotated(-90, 1, 0, 0);
+  glScaled(1, .1, 1);
+  square(0,0,-.3 ,squareSize,squareSize,dz, 0);
+
+  glTranslated(1.2, 0, -squareSize);
+  glRotated(-90, 0, 1, 0);
+  //square(0,0,-.3 ,squareSize,squareSize,dz, 0);
+  glTranslated(0, 0, squareSize*2);
+  //square(0,0,-.3 ,squareSize,squareSize,dz, 0);
+  glPopMatrix();
+  glPopAttrib();
+  glColor3f(color[0], color[1], color[2]);
+
+
+
+  square(squareDisplacement,0,0 ,squareSize,squareSize,dz, 0);
 
   if (drawSkel == 0) {
     glColor3f(0,0,0);
@@ -210,34 +250,41 @@ void drawSides(double squareSize, int bw, double x, double y, double z, double d
 
   double cubeWidth = ((squareSize * 2) * 3) + (spacing * 2);
 
+  double orange[3] = {1, .6, 0};
+  double red[3] = {1, 0, .2}  ;
+  double yellow[3] = {1, 1, 0};
+  double white[3] = {1, 1, 1};
+  double blue[3] = {.2, .2, 1};
+  double green[3] = {.2, 1, .2};
+
   // ORANGE - FRONT
   (bw == 0) ? glColor3f(.2,.2,.2) : glColor3f(1,.6,0);
   glNormal3d(0, 0, 1);
-  cubeSide(squareSize, x, y, z-(cubeWidth/2), 0, 0);
+  cubeSide(squareSize, x, y, z-(cubeWidth/2), 0, 0, orange, 1);
 
   // RED - BACK
   (bw == 0) ? glColor3f(.55,.55,.55) : glColor3f(1,0,0.2);
   glNormal3d(0, 0, 1);
-  cubeSide(squareSize, x, y, (cubeWidth/2), 0, 0);
+  cubeSide(squareSize, x, y, (cubeWidth/2), 0, 0, red, 0);
 
   // YELLOW - RIGHT
   (bw == 0) ? glColor3f(.35,.35,.35) : glColor3f(1,1,0);
   glNormal3d(0, 0, 1);
-  cubeSide(squareSize, (cubeWidth/2), y,z , 90, 0);
+  cubeSide(squareSize, (cubeWidth/2), y,z , 90, 0, yellow, 0);
 
   // WHITE - LEFT
   glColor3f(1,1,1);
   glNormal3d(0, 0, 1);
-  cubeSide(squareSize, (-cubeWidth/2), y, z, 90, 0);
+  cubeSide(squareSize, (-cubeWidth/2), y, z, 90, 0, white, 1);
 
   // GREEN - TOP
   (bw == 0) ? glColor3f(.1,.1,.1) : glColor3f(.5,.8,.2);
   glNormal3d(0, 0, 1);
-  cubeSide(squareSize, x, cubeWidth/2, z, 0 ,90);
+  cubeSide(squareSize, x, cubeWidth/2, z, 0 ,90, green, 1);
 
   (bw == 0) ? glColor3f(.1,.1,.1) : glColor3f(.5,.8,.2);
   glNormal3d(0, 0, 1);
-  cubeSide(squareSize, x, -cubeWidth/2, z, 0 ,90);
+  cubeSide(squareSize, x, -cubeWidth/2, z, 0 ,90, blue, 0);
 
   glDisable(GL_TEXTURE_2D);
   glPopMatrix();
@@ -254,20 +301,21 @@ void drawCenterBall(double squareSize) {
   double cubeWidth = ((squareSize * 2) * 3) + (spacing * 2);
 
   double cylinderThickness = .5;
+  double cylinderLength = cubeWidth -.1;
   glColor3f(.2, .2, .2);
   glPushMatrix();
-  glTranslated(0, 0, -cubeWidth/2);
+  glTranslated(0, 0, -cylinderLength/2);
   gluQuadricNormals(obj, GLU_SMOOTH);
-  gluCylinder(obj, cylinderThickness, cylinderThickness, cubeWidth, 24, 24);
-  glTranslated(0, cubeWidth/2, cubeWidth/2);
+  gluCylinder(obj, cylinderThickness, cylinderThickness, cylinderLength, 24, 24);
+  glTranslated(0, cylinderLength/2, cylinderLength/2);
   glRotated(90, 1, 0, 0);
-  gluCylinder(obj, cylinderThickness, cylinderThickness, cubeWidth, 24, 24);
-  glTranslated(-cubeWidth/2, 0, cubeWidth/2);
+  gluCylinder(obj, cylinderThickness, cylinderThickness, cylinderLength, 24, 24);
+  glTranslated(-cylinderLength/2, 0, cylinderLength/2);
   glRotated(90, 0, 1, 0);
-  gluCylinder(obj, cylinderThickness, cylinderThickness, cubeWidth, 24, 24);
+  gluCylinder(obj, cylinderThickness, cylinderThickness, cylinderLength, 24, 24);
   glPopMatrix();
 
-//  cubeBall(0, 0, 0, 2);
+  cubeBall(0, 0, 0, 1);
 
 }
 
@@ -551,7 +599,7 @@ void display() {
   //drawDesk(0, 0, 0, 1, 1, 1, 0);
   //glRotated(cubeRotate, 0, .1, 0);
   //glTranslated(1.65, 0, -1.6);
-  double cubeSize = 1.5;
+  double cubeSize = 1;
   int BW = 1;
   double xLoc = 0;
   double yLoc = 0;
@@ -683,18 +731,18 @@ void drawFloor() {
 void special(int key,int x,int y) {
   //  Right arrow key - increase angle by 5 degrees
   if (key == GLUT_KEY_RIGHT)
-  th += 5;
+  th += 1;
   //  Left arrow key - decrease angle by 5 degrees
   else if (key == GLUT_KEY_LEFT) {
-    th -= 5;
+    th -= 1;
   }
   //  Up arrow key - increase elevation by 5 degrees
   else if (key == GLUT_KEY_UP) {
-    if (ph < 45) ph += 5;
+    if (ph < 45) ph += 1;
   }
   //  Down arrow key - decrease elevation by 5 degrees
   else if (key == GLUT_KEY_DOWN) {
-    if (ph > -25) ph -= 5;
+    if (ph > -25) ph -= 1;
   }
   //  PageUp key - increase dim
   else if (key == GLUT_KEY_PAGE_UP) {
@@ -875,10 +923,13 @@ void idle() {
 *  Start up GLUT and tell it what to do
 */
 int main(int argc,char* argv[]) {
-  th=0;
-  ph=0;
+  th=71;
+  ph=25;
   mode = 1;
-  dim = 7.3;
+  dim = 4.6;
+  xpos = 1.4;
+  ypos = 1.3;
+  zpos = -.5;
   //  Initialize GLUT
   glutInit(&argc,argv);
   //  Request double buffered, true color window with Z buffering at 600x600
