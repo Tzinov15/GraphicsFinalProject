@@ -5,6 +5,25 @@
 
 int drawSkel = 0;
 int drawFull = 0;
+
+int newth = 0;
+int oldth = 0;
+
+int newph = 0;
+int oldph = 0;
+
+double newxpos = -1.545;
+double oldxpos = -1.545;
+
+double newypos = -.97;
+double oldypos = -.97;
+
+double newzpos = 11.573;
+double oldzpos = 11.573;
+
+double newdim = 12.5;
+double olddim = 12.5;
+
 unsigned int texture[10]; // Texture names
 
 #define Dfloor  36
@@ -798,18 +817,35 @@ void special(int key,int x,int y) {
 /*
 *  GLUT calls this routine when a key is pressed
 */
+
+void delayTest() {
+  printf("callback");
+
+}
+
+
 void key(unsigned char ch,int x,int y) {
 
   glLoadIdentity();
 
   //  Reset everything to starting point
   if (ch == '0') {
-    th = 25;
-    ph = 9;
+    oldth = th;
+    newth = 0;
+
+    oldph = ph;
+    newph = 0;
+
+    oldxpos = xpos;
+    newxpos = -1.545;
+
+    oldypos = ypos;
+    newypos = -.97;
+
+    oldzpos = zpos;
+    newzpos = 11.573;
+
     dim = 12.5;
-    xpos = -1.545;
-    ypos = -.97;
-    zpos = 11.573;
     fov = 63;
     sunSpeed = 1000.0;
     sunDistance = 20;
@@ -819,22 +855,48 @@ void key(unsigned char ch,int x,int y) {
   }
 
   if (ch == '1') {
-    th = 63;
-    ph = 22;
-    dim = 9.6;
-    xpos = 36.7;
-    ypos = .37;
-    zpos = -36.97;
+    oldth = th;
+    newth = 63;
+    oldph = ph;
+    newph = 22;
+
+    olddim = dim;
+    newdim = 9.6;
+
+
+
+    oldxpos = xpos;
+    newxpos = 36.7;
+
+    oldypos = ypos;
+    newypos = .37;
+
+    oldzpos = zpos;
+    newzpos = -36.97;
     fov = 55;
   }
 
   if (ch == '2') {
-    th = -168;
-    ph = 33;
-    dim = 12.4;
-    xpos = -1.545;
-    ypos = -.970;
-    zpos = 11.573;
+    oldth = th;
+    newth = 62;
+
+    oldph = ph;
+    newph = 3;
+
+    oldxpos = xpos;
+    newxpos = 3.7;
+
+    oldypos = ypos;
+    newypos = 9.5;
+
+    oldzpos = zpos;
+    newzpos = -1.637;
+    fov = 55;
+
+
+    olddim = dim;
+    newdim = 7.6;
+
     drawSkel = 1;
     drawFull = 0;
     fov = 63;
@@ -975,6 +1037,65 @@ void reshape(int width,int height) {
 void idle() {
   //  Elapsed time in seconds
   double t = glutGet(GLUT_ELAPSED_TIME)/sunSpeed;
+  if (oldth < newth) {
+    th++;
+    oldth++;
+  }
+
+  if (oldth > newth) {
+    th--;
+    oldth--;
+  }
+  if (oldph < newph) {
+    ph++;
+    oldph++;
+  }
+
+  if (oldph > newph) {
+    ph--;
+    oldph--;
+  }
+
+  if (oldxpos < newxpos) {
+    xpos++;
+    oldxpos++;
+  }
+
+  if (oldxpos > newxpos) {
+    xpos--;
+    oldxpos--;
+  }
+
+  if (oldypos < newypos) {
+    ypos++;
+    oldypos++;
+  }
+
+  if (oldypos > newypos) {
+    ypos--;
+    oldypos--;
+  }
+
+  if (oldzpos < newzpos) {
+    zpos++;
+    oldzpos++;
+  }
+
+  if (oldzpos > newzpos) {
+    zpos--;
+    oldzpos--;
+  }
+
+  if (olddim < newdim) {
+    dim++;
+    olddim++;
+  }
+
+  if (olddim > newdim) {
+    dim--;
+    olddim--;
+  }
+
   zh = fmod(90*t,360.0);
   cubeRotate = fmod(90*t,360.0);
   //  Tell GLUT it is necessary to redisplay the scene
@@ -985,8 +1106,8 @@ void idle() {
 *  Start up GLUT and tell it what to do
 */
 int main(int argc,char* argv[]) {
-    th = 25;
-    ph = 9;
+    th = 0;
+    ph = 0;
     dim = 12.5;
     xpos = -1.545;
     ypos = -.97;

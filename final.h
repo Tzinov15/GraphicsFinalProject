@@ -98,6 +98,7 @@ void drawWalls(double x,double y,double z, double dx,double dy,double dz, double
 void drawTableSides(double x, double y, double z, double dx, double dy, double dz, double th);
 void drawCenterBall(double squareSize);
 void drawCubeStand(double x,double y,double z, double dx,double dy,double dz, double th);
+void delayTest();
 
 
 
