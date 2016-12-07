@@ -3,41 +3,45 @@ Final Project
 Rubiks Cube + Dynamic Classroom Setting
 
 
+
+<><><> BEST VIEWS OF THE PROJECT: <><><>
+
+Cycle between them by pressing:
+0 (start view)
+1 (small cube on side desk)
+2 (focus on inner working of Rubiks cube)
+3 (view from the ground with lower light source)
+4 (CubeCeption! See the back corner cube through the hole of the main cube)
+
+In any view, press:
+s = remove lines from cube
+f = remove everything from the cube except the core structure
+c = remove the core structure
+
+Combinations of these three yield interesting results! (ei: cube without core, cube with only core)
+
+
 Arrow Keys to change view angle!
 
 
 Key bindings
 
   PERSPECTIVE / VIEW
-  m          Toggle between perspective and orthogonal
-  s          Toggle whether the skeleton of the Rubiks Cubes are shown or not
   +/-        Changes field of view for perspective
   arrows     Change view angle
   PgDn/PgUp  Zoom in and out
   0          Reset view angle
 
-  SUN STUFF: 
+  SUN STUFF:
   z/Z        Change speed of sun and cube (need to become disjoint)
   d/D        Change distance of sun
   e/E        Change elevation of sun
   w          Pause the motion of the sun
+  q          Pause the motion of the cube
   ><         (horizontal carrot keys) Revolve sun
-  
+
 
   CAREFUL WITH MOVEMENT WITHIN THE SCENE. IT IS EASY TO "EXIT" THE ROOM. PRESS 0 TO RESET. THIS WILL BE FIXED
   j/k        Strafe to the left and right
   h/l        Move forwards and backwards within the scene
   ESC        Exit
-
-
-  Cool Stuff:
-  Play around with the field of view ( + / - ) to go the "back of the classroom" and "up front near the cube". Reset scene with 0
-
-
-
-  Progress Update:
-  I decided to pivot the direction of this project to turn it into a more graphically pleasing result. While I still hope to have at least the removal of individual pieces and peeking inside of a cube part implemented, I will focus on more graphically challenging/intriguing aspects (shadow being casted from the cube onto the table, allow the user to see the room from the perspective of the spinning cube, have animated "drawing" on the chalk board, have more elements inside the room such as a desk chair, table lamps, and a cup of pencils), etc. With this pivot I hope to both satisfy the intent of this project/class (cool looking graphics that demonstrate learning) as well as lessen my work load on non-graphical aspects (implementing a data representation for the colors of the cube sides)
-
-
-
-

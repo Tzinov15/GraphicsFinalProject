@@ -5,6 +5,7 @@
 
 int drawSkel = 0;
 int drawFull = 0;
+int drawCore = 1;
 
 int newth = 0;
 int oldth = 0;
@@ -176,7 +177,7 @@ void cubeSide(double squareSize, double x, double y, double z, double th, double
   the square perfectly aligning itself RIGHT NEXT to the other square
 
   Adding then the spacing value will give enough spacing between each square to
-   draw the black frame
+  draw the black frame
   */
 
   glPushMatrix();
@@ -202,48 +203,51 @@ void cubeSide(double squareSize, double x, double y, double z, double th, double
     square(-squareDisplacement,0,0 ,squareSize,squareSize,dz, 0);
 
   }
-  square(0,0,0 ,squareSize,squareSize,dz, 0);
-  if (inOrOut) square(0,0,.3 ,squareSize,squareSize,dz, 0);
-  else  square(0,0,-.3 ,squareSize,squareSize,dz, 0);
+
+  if (drawCore == 1) {
+    square(0,0,0 ,squareSize,squareSize,dz, 0);
+    if (inOrOut) square(0,0,.3 ,squareSize,squareSize,dz, 0);
+    else  square(0,0,-.3 ,squareSize,squareSize,dz, 0);
 
 
-  double insert;
-  if (inOrOut) insert = .15;
-  else insert = -.15;
+    double insert;
+    if (inOrOut) insert = .15;
+    else insert = -.15;
 
-  /* Bottom edge */
-  glPushAttrib(GL_COLOR_BUFFER_BIT);
-  glColor3f(.2, .2, .2);
-  glPushMatrix();
+    /* Bottom edge */
+    glPushAttrib(GL_COLOR_BUFFER_BIT);
+    glColor3f(.2, .2, .2);
+    glPushMatrix();
 
-  glTranslated(0, -squareSize-.3, insert);
-  glRotated(90, 1, 0, 0);
-  glScaled(1, .1, 1);
-  square(0,0,-.3 ,squareSize,squareSize,dz, 0);
+    glTranslated(0, -squareSize-.3, insert);
+    glRotated(90, 1, 0, 0);
+    glScaled(1, .1, 1);
+    square(0,0,-.3 ,squareSize,squareSize,dz, 0);
 
-  if (inOrOut) glTranslated(-squareSize+.3, 0, -squareSize-.3);
-  else  glTranslated(-squareSize+.3, 0, -squareSize-.3);
-  glRotated(90,0 , 1, 0);
-  square(0,0,-.3 ,squareSize,squareSize,dz, 0);
+    if (inOrOut) glTranslated(-squareSize+.3, 0, -squareSize-.3);
+    else  glTranslated(-squareSize+.3, 0, -squareSize-.3);
+    glRotated(90,0 , 1, 0);
+    square(0,0,-.3 ,squareSize,squareSize,dz, 0);
 
-  if (inOrOut) glTranslated(0, 0, squareSize*2);
-  else glTranslated(0, 0, squareSize*2);
-  square(0,0,-.3 ,squareSize,squareSize,dz, 0);
+    if (inOrOut) glTranslated(0, 0, squareSize*2);
+    else glTranslated(0, 0, squareSize*2);
+    square(0,0,-.3 ,squareSize,squareSize,dz, 0);
 
-  glPopMatrix();
+    glPopMatrix();
 
-  glPushMatrix();
+    glPushMatrix();
 
 
 
-  glTranslated(0, squareSize+.3, insert);
-  glRotated(-90, 1, 0, 0);
-  glScaled(1, .1, 1);
-  square(0,0,-.3 ,squareSize,squareSize,dz, 0);
+    glTranslated(0, squareSize+.3, insert);
+    glRotated(-90, 1, 0, 0);
+    glScaled(1, .1, 1);
+    square(0,0,-.3 ,squareSize,squareSize,dz, 0);
 
-  glPopMatrix();
-  glPopAttrib();
-  glColor3f(color[0], color[1], color[2]);
+    glPopMatrix();
+    glPopAttrib();
+    glColor3f(color[0], color[1], color[2]);
+  }
 
 
 
@@ -275,7 +279,9 @@ void drawSides(double squareSize, int bw, double x, double y, double z, double d
   glBindTexture(GL_TEXTURE_2D,texture[2]);
 
 
-  drawCenterBall(squareSize);
+  if (drawCore == 1) {
+    drawCenterBall(squareSize);
+  }
 
 
   double cubeWidth = ((squareSize * 2) * 3) + (spacing * 2);
@@ -577,8 +583,8 @@ void display() {
 
     /* The light obviously doesn't come from physically creating the sun object below in the scene.
     Whether we draw this sun object or not is not significant. However, the scene does make more sense if the
-     user can see where the light is actively coming from. We acheive this illusion (openGL lighting seemingly 'coming' from our sun)
-      by using the idle function to update the physical position of the sun, and then simultanously updating the lighting position as well*/
+    user can see where the light is actively coming from. We acheive this illusion (openGL lighting seemingly 'coming' from our sun)
+    by using the idle function to update the physical position of the sun, and then simultanously updating the lighting position as well*/
     if (seeSun)
     sun(Position[0],Position[1],Position[2] , 0.3);
 
@@ -860,11 +866,16 @@ void key(unsigned char ch,int x,int y) {
     oldfov = fov;
     newfov = 63;
 
+
     sunSpeed = 1000.0;
     sunDistance = 20;
     sunElevation = 8;
-    drawFull = 1;
+
     drawSkel = 0;
+    drawCore = 1;
+    drawFull = 1;
+
+    sunMovement = 1;
   }
 
   if (ch == '1') {
@@ -882,6 +893,11 @@ void key(unsigned char ch,int x,int y) {
 
     olddim = dim;
     newdim = 9.6;
+
+
+    drawSkel = 1;
+    drawCore = 1;
+    drawFull = 1;
 
     oldzpos = zpos;
     newzpos = -36.97;
@@ -907,6 +923,7 @@ void key(unsigned char ch,int x,int y) {
 
     drawSkel = 1;
     drawFull = 0;
+    drawCore = 1;
 
     sunDistance = 20;
     sunElevation = 8;
@@ -932,10 +949,38 @@ void key(unsigned char ch,int x,int y) {
     oldfov = fov;
     newfov = 63;
 
-    drawSkel = 1;
-    drawFull = 0;
+    drawSkel = 0;
+    drawCore = 1;
+    drawFull = 1;
     sunDistance = 15;
     sunElevation = -8;
+  }
+
+  if (ch == '4') {
+    oldth = th;
+    newth = 35;
+    oldph = ph;
+    newph = -9;
+    oldxpos = xpos;
+    newxpos = 3;
+    oldypos = ypos;
+    newypos = 9;
+    oldzpos = zpos;
+    newzpos = -2;
+
+    olddim = dim;
+    newdim = 8;
+
+    oldfov = fov;
+    newfov = 36;
+
+    drawSkel = 1;
+    drawCore = 0;
+    drawFull = 1;
+    sunDistance = 15;
+    sunElevation = -8;
+    sunMovement= 0;
+    cubeRotate = 30.33;
   }
 
 
@@ -956,13 +1001,25 @@ void key(unsigned char ch,int x,int y) {
   else if (ch == 'E')
   sunElevation -= 1;
 
-  /* Enable Disable Sun */
-  else if (ch == 'q')
-  light = 1-light;
 
   /* Enable Disable Sun Movement */
   else if (ch == 'w')
   sunMovement = 1 - sunMovement;
+
+  else if (ch == 'q')
+  cubeMovement = 1 - cubeMovement;
+
+
+  else if (ch == 'v') {
+    printf("%f\n", cubeRotate);
+    cubeRotate += 100;
+  }
+  else if (ch == 'V') {
+    cubeRotate -= 100;
+    if (cubeRotate == 0)
+    cubeRotate = 100;
+  }
+
 
   //  Toggle axes
   else if (ch == 'a' || ch == 'A')
@@ -993,6 +1050,7 @@ void key(unsigned char ch,int x,int y) {
     sunSpeed = 100;
   }
 
+
   // Toggle Skeletons
   else if (ch == 's')
   drawSkel = 1-drawSkel;
@@ -1000,7 +1058,7 @@ void key(unsigned char ch,int x,int y) {
   else if (ch == 'f')
   drawFull = 1-drawFull;
   else if (ch == 'c')
-  seeSun = 1 - seeSun;
+  drawCore = 1 - drawCore;
 
   /* Strafing left and right */
   if (ch=='k') {
@@ -1052,7 +1110,8 @@ void key(unsigned char ch,int x,int y) {
 
   //  Reproject
   Project();
-  glutIdleFunc(sunMovement?idle:NULL);  //  Tell GLUT it is necessary to redisplay the scene
+  glutIdleFunc(idle);  //  Tell GLUT it is necessary to redisplay the scene
+  //glutIdleFunc(sunMovement?idle:NULL);  //  Tell GLUT it is necessary to redisplay the scene
   glutPostRedisplay();
 }
 
@@ -1073,6 +1132,7 @@ void reshape(int width,int height) {
 * duration of the program */
 void idle() {
   //  Elapsed time in seconds
+  double tcube = glutGet(GLUT_ELAPSED_TIME)/cubeRotate;
   double t = glutGet(GLUT_ELAPSED_TIME)/sunSpeed;
   if (oldth < newth) {
     th++;
@@ -1142,9 +1202,12 @@ void idle() {
     fov--;
     oldfov--;
   }
-
-  zh = fmod(90*t,360.0);
-  cubeRotate = fmod(90*t,360.0);
+   if (sunMovement) {
+     zh = fmod(90*t,360.0);
+   }
+   if (cubeMovement) {
+     cubeRotate = fmod(90*t,360.0);
+   }
   //  Tell GLUT it is necessary to redisplay the scene
   Project();
   glutPostRedisplay();
@@ -1154,21 +1217,22 @@ void idle() {
 *  Start up GLUT and tell it what to do
 */
 int main(int argc,char* argv[]) {
-    th = 0;
-    ph = 0;
-    dim = 12;
-    xpos = -2;
-    ypos = -1;
-    zpos = 11;
-    fov = 63;
-    sunSpeed = 1000.0;
-    sunDistance = 20;
-    sunElevation = 8;
-    drawFull = 1;
-    drawSkel = 0;
+  th = 0;
+  ph = 0;
+  dim = 12;
+  xpos = -2;
+  ypos = -1;
+  zpos = 11;
+  fov = 63;
+  sunSpeed = 1000.0;
+  sunDistance = 20;
+  sunElevation = 8;
+  drawFull = 1;
+  drawSkel = 0;
+  cubeRotate = 1000.0;
 
-//  ypos = 1.861;
-//  zpos = -3.842;
+  //  ypos = 1.861;
+  //  zpos = -3.842;
   //  Initialize GLUT
   glutInit(&argc,argv);
   //  Request double buffered, true color window with Z buffering at 600x600

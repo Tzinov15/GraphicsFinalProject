@@ -50,9 +50,11 @@ double asp=1;     //  Aspect ratio
 double dim=6.0;   //  Size of world
 
 double sunSpeed = 1000.0;
+double cubeRotate= 1000.0;
 int sunDistance = 8;
 float sunElevation = 1;
 int sunMovement = 1;
+int cubeMovement = 1;
 int seeSun = 1;
 
 
@@ -74,7 +76,6 @@ int emission  =   0;  // Emission intensity (%)
 int shininess =   0;  // Shininess (power of two)
 float shiny   =   1;  // Shininess (value)
 int zh        =  90;  // Light azimuth
-int cubeRotate        =  90;
 float ylight  =   0;  // Elevation of light
 int light = 1;
 
