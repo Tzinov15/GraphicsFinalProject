@@ -181,6 +181,8 @@ void cubeSide(double squareSize, double x, double y, double z, double th, double
 
   }
   square(0,0,0 ,squareSize,squareSize,dz, 0);
+  if (inOrOut) square(0,0,.3 ,squareSize,squareSize,dz, 0);
+  else  square(0,0,-.3 ,squareSize,squareSize,dz, 0);
 
 
   double insert;
@@ -198,12 +200,12 @@ void cubeSide(double squareSize, double x, double y, double z, double th, double
   square(0,0,-.3 ,squareSize,squareSize,dz, 0);
 
   if (inOrOut) glTranslated(-squareSize+.3, 0, -squareSize-.3);
-  else  glTranslated(-squareSize+.3, -squareSize*2, -squareSize-.3);
+  else  glTranslated(-squareSize+.3, 0, -squareSize-.3);
   glRotated(90,0 , 1, 0);
   square(0,0,-.3 ,squareSize,squareSize,dz, 0);
 
   if (inOrOut) glTranslated(0, 0, squareSize*2);
-  else glTranslated(0, squareSize*2, squareSize*2);
+  else glTranslated(0, 0, squareSize*2);
   square(0,0,-.3 ,squareSize,squareSize,dz, 0);
 
   glPopMatrix();
@@ -932,8 +934,8 @@ void idle() {
 *  Start up GLUT and tell it what to do
 */
 int main(int argc,char* argv[]) {
-  th=10;
-  ph=20;
+  th=-14;
+  ph=-11;
   mode = 1;
   dim = 4.6;
   xpos = 1.875;
