@@ -549,7 +549,6 @@ void drawTableSides(double x, double y, double z, double dx, double dy, double d
 *  OpenGL (GLUT) calls this routine to display the scene
 */
 void display() {
-  const double len=1.5;  //  Length of axes
   //  Erase the window and the depth buffer
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   glClearColor( .2, .2, .2, 1);
@@ -979,7 +978,7 @@ void key(unsigned char ch,int x,int y) {
     drawFull = 1;
     sunDistance = 15;
     sunElevation = -8;
-    sunMovement= 0;
+    cubeMovement= 0;
     cubeRotate = 30.33;
   }
 
@@ -1132,7 +1131,6 @@ void reshape(int width,int height) {
 * duration of the program */
 void idle() {
   //  Elapsed time in seconds
-  double tcube = glutGet(GLUT_ELAPSED_TIME)/cubeRotate;
   double t = glutGet(GLUT_ELAPSED_TIME)/sunSpeed;
   if (oldth < newth) {
     th++;
