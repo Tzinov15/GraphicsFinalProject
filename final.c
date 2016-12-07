@@ -4,6 +4,7 @@
 
 
 int drawSkel = 0;
+int drawFull = 0;
 unsigned int texture[10]; // Texture names
 
 #define Dfloor  16
@@ -139,7 +140,7 @@ static void sun(double x,double y,double z,double r) {
   glPopMatrix();
 }
 
-void cubeSide(double squareSize, double x, double y, double z, double th, double ph, double color[], int inOrOout) {
+void cubeSide(double squareSize, double x, double y, double z, double th, double ph, double color[], int inOrOut) {
   // TODO: Have some notion for randomly choosing colors for each square
 
   double squareDisplacement = (squareSize*2) + spacing;
@@ -165,36 +166,44 @@ void cubeSide(double squareSize, double x, double y, double z, double th, double
   double dz = 1;
 
   glColor3f(color[0], color[1], color[2]);
-  square(squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
-  square(0,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
-  square(-squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
+  if (drawFull == 1) {
+    square(squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
+    square(0,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
+    square(-squareDisplacement,squareDisplacement,0 ,squareSize,squareSize,dz, 0);
 
-  // bottom row
-  square(squareDisplacement,-squareDisplacement,0 ,squareSize,squareSize,dz, 0);
-  square(0,-squareDisplacement,0 ,squareSize,squareSize,dz, 0);
-  square(-squareDisplacement,-squareDisplacement,0 ,squareSize,squareSize,dz, 0);
+    // bottom row
+    square(squareDisplacement,-squareDisplacement,0 ,squareSize,squareSize,dz, 0);
+    square(0,-squareDisplacement,0 ,squareSize,squareSize,dz, 0);
+    square(-squareDisplacement,-squareDisplacement,0 ,squareSize,squareSize,dz, 0);
 
-  // middle row
-  square(-squareDisplacement,0,0 ,squareSize,squareSize,dz, 0);
+    // middle row
+    square(-squareDisplacement,0,0 ,squareSize,squareSize,dz, 0);
 
+  }
   square(0,0,0 ,squareSize,squareSize,dz, 0);
-  if (inOrOout == 0) square(0,0,-.3 ,squareSize,squareSize,dz, 0);
-  if (inOrOout == 1) square(0,0,.3 ,squareSize,squareSize,dz, 0);
+
+
+  double insert;
+  if (inOrOut) insert = .15;
+  else insert = -.15;
 
   /* Bottom edge */
   glPushAttrib(GL_COLOR_BUFFER_BIT);
   glColor3f(.2, .2, .2);
   glPushMatrix();
 
-
-  glTranslated(0, -squareSize-.3, -.10);
+  glTranslated(0, -squareSize-.3, insert);
   glRotated(90, 1, 0, 0);
   glScaled(1, .1, 1);
   square(0,0,-.3 ,squareSize,squareSize,dz, 0);
 
-
-
+  if (inOrOut) glTranslated(-squareSize+.3, 0, -squareSize-.3);
+  else  glTranslated(-squareSize+.3, -squareSize*2, -squareSize-.3);
   glRotated(90,0 , 1, 0);
+  square(0,0,-.3 ,squareSize,squareSize,dz, 0);
+
+  if (inOrOut) glTranslated(0, 0, squareSize*2);
+  else glTranslated(0, squareSize*2, squareSize*2);
   square(0,0,-.3 ,squareSize,squareSize,dz, 0);
 
   glPopMatrix();
@@ -203,23 +212,20 @@ void cubeSide(double squareSize, double x, double y, double z, double th, double
 
 
 
-  glTranslated(0, squareSize+.3, -.10);
+  glTranslated(0, squareSize+.3, insert);
   glRotated(-90, 1, 0, 0);
   glScaled(1, .1, 1);
   square(0,0,-.3 ,squareSize,squareSize,dz, 0);
 
-  glTranslated(1.2, 0, -squareSize);
-  glRotated(-90, 0, 1, 0);
-  //square(0,0,-.3 ,squareSize,squareSize,dz, 0);
-  glTranslated(0, 0, squareSize*2);
-  //square(0,0,-.3 ,squareSize,squareSize,dz, 0);
   glPopMatrix();
   glPopAttrib();
   glColor3f(color[0], color[1], color[2]);
 
 
 
-  square(squareDisplacement,0,0 ,squareSize,squareSize,dz, 0);
+  if (drawFull == 1) {
+    square(squareDisplacement,0,0 ,squareSize,squareSize,dz, 0);
+  }
 
   if (drawSkel == 0) {
     glColor3f(0,0,0);
@@ -599,7 +605,7 @@ void display() {
   //drawDesk(0, 0, 0, 1, 1, 1, 0);
   //glRotated(cubeRotate, 0, .1, 0);
   //glTranslated(1.65, 0, -1.6);
-  double cubeSize = 1;
+  double cubeSize = 1.5;
   int BW = 1;
   double xLoc = 0;
   double yLoc = 0;
@@ -840,6 +846,9 @@ void key(unsigned char ch,int x,int y) {
   // Toggle Skeletons
   else if (ch == 's')
   drawSkel = 1-drawSkel;
+  // Toggle Skeletons
+  else if (ch == 'f')
+  drawFull = 1-drawFull;
   else if (ch == 'c')
   seeSun = 1 - seeSun;
 
@@ -923,13 +932,13 @@ void idle() {
 *  Start up GLUT and tell it what to do
 */
 int main(int argc,char* argv[]) {
-  th=71;
-  ph=25;
+  th=10;
+  ph=20;
   mode = 1;
   dim = 4.6;
-  xpos = 1.4;
-  ypos = 1.3;
-  zpos = -.5;
+  xpos = 1.875;
+  ypos = 1.861;
+  zpos = -3.842;
   //  Initialize GLUT
   glutInit(&argc,argv);
   //  Request double buffered, true color window with Z buffering at 600x600
