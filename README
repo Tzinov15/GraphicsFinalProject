@@ -13,6 +13,10 @@ Cycle between them by pressing:
 3 (view from the ground with lower light source)
 4 (CubeCeption! See the back corner cube through the hole of the main cube)
 
+
+!! Movement outside of these scenes is supported, but project / visuals were
+tailored and optimized to work within those 5 views !!
+
 In any view, press:
 s = remove lines from cube
 f = remove everything from the cube except the core structure
@@ -20,9 +24,17 @@ c = remove the core structure
 
 Combinations of these three yield interesting results! (ei: cube without core, cube with only core)
 
+Project Highlights / Personal Achievements:
+  - Animation / Transition from scene to scene: differences in old parameters
+  (angle, position, fov, etc) vs new parameters are calculated, idle function is
+  utilized to redraw scene periodically as we are "moving" to next location
+  - Modularity of code/design: I wanted to be able to build up the cube part by
+  part so that with keybindings, a user can quickly see how the cube is built by
+  seeing separate parts individually
+  - No help from any other software like Blender
+
 
 Arrow Keys to change view angle!
-
 
 Key bindings
 
@@ -39,7 +51,6 @@ Key bindings
   w          Pause the motion of the sun
   q          Pause the motion of the cube
   ><         (horizontal carrot keys) Revolve sun
-
 
   CAREFUL WITH MOVEMENT WITHIN THE SCENE. IT IS EASY TO "EXIT" THE ROOM. PRESS 0 TO RESET. THIS WILL BE FIXED
   j/k        Strafe to the left and right

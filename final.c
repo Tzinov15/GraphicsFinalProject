@@ -649,9 +649,11 @@ void display() {
   glColor3f(1,1,1);
   //  Display parameters
 
+  /*
   glColor3f(.2,.3,.8);
   glWindowPos2i(5,5);
   Print("Angle=%d,%d  Dim=%.1f FOV=%d xpos=%.3f ypos=%.3f zpos=%.3f",th,ph,dim,fov, xpos, ypos, zpos);
+  */
   glFlush();
   glutSwapBuffers();
 
