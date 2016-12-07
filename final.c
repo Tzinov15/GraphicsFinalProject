@@ -7,9 +7,9 @@ int drawSkel = 0;
 int drawFull = 0;
 unsigned int texture[10]; // Texture names
 
-#define Dfloor  16
-#define YfloorMin -8
-#define YfloorMax 12
+#define Dfloor  36
+#define YfloorMin -12
+#define YfloorMax 16
 
 
 void Print(const char* format , ...) {
@@ -328,7 +328,6 @@ void drawCenterBall(double squareSize) {
 }
 
 
-
 static void square(double x,double y,double z, double dx,double dy,double dz, double th) {
   float white[] = {1,1,1,1};
   float Emission[]  = {0.0,0.0,0.01*emission,1.0};
@@ -364,34 +363,28 @@ static void square(double x,double y,double z, double dx,double dy,double dz, do
 void drawDesk(double x,double y,double z, double dx,double dy,double dz, double th) {
   glPushMatrix();
   glTranslated(x,y,z);
-  glRotated(ph,0,0,1);
-  glRotated(th,0,1,0);
   glScaled(dx,dy,dz);
   // Draw the four legs
-  drawTableLeg((-4 + x),0,(2+z),1,1,1,0);
-  drawTableLeg((4 + x),0,(2+z),1,1,1,0);
-  drawTableLeg((-4 + x),0,(-2+z),1,1,1,0);
-  drawTableLeg((4 + x),0,(-2+z),1,1,1,0);
-  /*
-  drawTableLeg(-4,-5,2,1,1,1,0);
-  drawTableLeg(4,-5,2,1,1,1,0);
-  drawTableLeg(-4,-5,-2,1,1,1,0);
-  drawTableLeg(4,-5,-2,1,1,1,0);
-  drawTableTop(0, .3, .7, 1, 1, .5, 0);
-  drawTableTop(0, 0, .7, 1, 1, .5, 0);
-  drawTableSides(0, -2, -1.80, 1, 1, 1, 0);
-  drawTableSides(0, -2, 3.20, 1, 1, 1, 0);
-  drawTableSides(-5, -2, .70, .5, 1, 1, 90);
-  drawTableSides(5, -2, .70, .5, 1, 1, 90);
-  */
+  drawTableLeg((-4 + x),y,(2+z),1,1,1,0);
+  drawTableLeg((4 + x),y,(2+z),1,1,1,0);
+  drawTableLeg((-4 + x),y,(-2+z),1,1,1,0);
+  drawTableLeg((4 + x),y,(-2+z),1,1,1,0);
+
+  drawTableTop(x, 5.3+y, z+.7, 1, 1, .5, 0);
+  drawTableTop(x, 5+y, z+.7, 1, 1, .5, 0);
+  drawTableSides(x, 3+y, -1.80+z, 1, 1, 1, 0);
+  drawTableSides(x, 3+y, 3.20+z, 1, 1, 1, 0);
+  drawTableSides(-5+x, 3+y, .70+z, .5, 1, 1, 90);
+  drawTableSides(x+5, 3+y, .70+z, .5, 1, 1, 90);
+  glDisable(GL_TEXTURE_2D);
   glPopMatrix();
 }
 
 void drawTableLeg(double x, double y, double z, double dx, double dy, double dz, double th) {
   glPushMatrix();
   //  Offset
-  glTranslated(x,y,z);
   glRotated(th,0,1,0);
+  glTranslated(x,y,z);
   glScaled(dx,dy,dz);
 
   drawTableLegSide(0, 0, 0, .3, 3, 1, 0);
@@ -440,18 +433,17 @@ void drawTableLegSide(double x, double y, double z, double dx, double dy, double
   glVertex3f(-1,+1, 1);
   glNormal3d(0,0,-1);
   glEnd();
+  glDisable(GL_TEXTURE_2D);
   //  Undo transofrmations
   glPopMatrix();
-
-
 }
 
 // The table top will be made up two large horizontal rectangular planes that extend BEYOND
 // the table legs, and have four smaller rectangles at each side. (A 3D rectangular slab)
 void drawTableTop(double x, double y, double z, double dx, double dy, double dz, double th) {
   glPushMatrix();
-  glTranslated(x,y,z);
   glRotated(th,0,1,0);
+  glTranslated(x,y,z);
   glScaled(dx,dy,dz);
   int tableSize = 5;
   glEnable(GL_TEXTURE_2D);
@@ -460,7 +452,7 @@ void drawTableTop(double x, double y, double z, double dx, double dy, double dz,
   glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,textureMode?GL_REPLACE:GL_MODULATE);
   glBindTexture(GL_TEXTURE_2D,texture[3]);
   glPolygonOffset(1,1);
-  glColor3f(1,1,1);
+  //glColor3f(1,1,1);
   glNormal3f(1,0,0);
 
 
@@ -593,7 +585,6 @@ void display() {
   else {
     glDisable(GL_LIGHTING);
   }
-
   drawFloor();
   drawCeiling();
   drawWalls(0,0,0,1,1,1,0, 0);
@@ -604,9 +595,15 @@ void display() {
 
 
 
-  //drawDesk(0, 0, 0, 1, 1, 1, 0);
-  //glRotated(cubeRotate, 0, .1, 0);
-  //glTranslated(1.65, 0, -1.6);
+  drawDesk(0, -2.5, 0, 3, 3, 3, 0);
+  drawDesk(15.5, -2.5, -17, 1, 8, 1, 0);
+
+  glPushMatrix();
+  glTranslatef(30, 5, -33);
+  drawSides(.3, 0, 0, 0, 0, 1, 1, 1, 0, 0);
+  glPopMatrix();
+  drawCubeStand(0, 0,0, 1, 1, 1, 0);
+  //glTranslated(1.65 , 0, -1.6);
   double cubeSize = 1.5;
   int BW = 1;
   double xLoc = 0;
@@ -614,11 +611,15 @@ void display() {
   double zLoc = 0;
   double xSize = 1;
   double ySize = 1;
-  double zSize = 1;
-  double angRot = 0;
-  double angElevation = 0;
+  double zSize = 1  ;
+  double angRot = 45;
+  double angElevation = 45;
 
+  glPushMatrix();
+  glTranslatef(0, 8, 0);
+  glRotated(cubeRotate, 0, 1, 0);
   drawSides(cubeSize, BW, xLoc, yLoc, zLoc, xSize, ySize, zSize, angRot, angElevation);
+  glPopMatrix();
   //drawSides(.45, 1, -1, 1.6, 2, 1, 1, 1, 45, 45);
 
   glColor3f(1,1,1);
@@ -630,6 +631,30 @@ void display() {
   glFlush();
   glutSwapBuffers();
 
+}
+
+
+
+void drawCubeStand(double x,double y,double z, double dx,double dy,double dz, double th) {
+  glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST); //Smooth polygons
+  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); //Best perspective corrections
+  glHint(GL_POINT_SMOOTH_HINT, GL_NICEST); //Smooth points
+  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST); //Smooth lines
+  GLUquadricObj *obj = gluNewQuadric();
+
+  glPushMatrix();
+  glTranslated(x,y,z);
+  glRotated(th,0,1,0);
+  glScaled(dx,dy,dz);
+
+
+  double cylinderThickness = 2.0;
+  double cylinderLength = 1.5;
+  glColor3f(.8, .8, .8);
+  gluQuadricNormals(obj, GLU_SMOOTH);
+  glRotated(-90, 1, 0, 0);
+  gluCylinder(obj, cylinderThickness, .3, cylinderLength, 24, 24);
+  glPopMatrix();
 }
 
 
@@ -684,7 +709,7 @@ void drawCeiling() {
   glBindTexture(GL_TEXTURE_2D,texture[4]);
   glPolygonOffset(1,1);
   glColor3f(1,1,1);
-  glNormal3f(0,-1,0);
+  glNormal3f(0,1,0);
   for (j=-Dfloor;j<Dfloor;j++)
   {
     glBegin(GL_QUAD_STRIP);
@@ -754,7 +779,7 @@ void special(int key,int x,int y) {
   }
   //  PageUp key - increase dim
   else if (key == GLUT_KEY_PAGE_UP) {
-    if (dim < 8.4) dim += 0.1;
+    if (dim < 12.4) dim += 0.1;
   }
   //  PageDown key - decrease dim
   else if (key == GLUT_KEY_PAGE_DOWN && dim>1) {
@@ -779,16 +804,40 @@ void key(unsigned char ch,int x,int y) {
 
   //  Reset everything to starting point
   if (ch == '0') {
-    th = 0;
-    ph = -15;
-    dim = 8.5;
-    xpos = 0;
-    ypos = 0;
-    zpos = 0;
-    fov = 55;
+    th = 25;
+    ph = 9;
+    dim = 12.5;
+    xpos = -1.545;
+    ypos = -.97;
+    zpos = 11.573;
+    fov = 63;
     sunSpeed = 1000.0;
-    sunDistance = 5;
-    sunElevation = 1;
+    sunDistance = 20;
+    sunElevation = 8;
+    drawFull = 1;
+    drawSkel = 0;
+  }
+
+  if (ch == '1') {
+    th = 63;
+    ph = 22;
+    dim = 9.6;
+    xpos = 36.7;
+    ypos = .37;
+    zpos = -36.97;
+    fov = 55;
+  }
+
+  if (ch == '2') {
+    th = -168;
+    ph = 33;
+    dim = 12.4;
+    xpos = -1.545;
+    ypos = -.970;
+    zpos = 11.573;
+    drawSkel = 1;
+    drawFull = 0;
+    fov = 63;
   }
 
 
@@ -892,8 +941,10 @@ void key(unsigned char ch,int x,int y) {
     zpos -= (float)(cos(xrotrad)*cos(yrotrad));
   }
 
+
+
   else if (ch=='b') {
-    diffuse = 100;
+    diffuse = 200;
   }
   else if (ch=='B') {
     diffuse = 0;
@@ -934,13 +985,21 @@ void idle() {
 *  Start up GLUT and tell it what to do
 */
 int main(int argc,char* argv[]) {
-  th=-14;
-  ph=-11;
-  mode = 1;
-  dim = 4.6;
-  xpos = 1.875;
-  ypos = 1.861;
-  zpos = -3.842;
+    th = 25;
+    ph = 9;
+    dim = 12.5;
+    xpos = -1.545;
+    ypos = -.97;
+    zpos = 11.573;
+    fov = 63;
+    sunSpeed = 1000.0;
+    sunDistance = 20;
+    sunElevation = 8;
+    drawFull = 1;
+    drawSkel = 0;
+
+//  ypos = 1.861;
+//  zpos = -3.842;
   //  Initialize GLUT
   glutInit(&argc,argv);
   //  Request double buffered, true color window with Z buffering at 600x600
